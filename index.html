@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espelho de Decisões</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0c0c0f;
+    --surface: #13131a;
+    --glass: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --gold: #c9a96e;
+    --gold-dim: rgba(201,169,110,0.15);
+    --text: #e8e3d9;
+    --muted: #7a7068;
+    --accent-1: #6e9fc9; /* azul - razão */
+    --accent-2: #c96e6e; /* vermelho - emoção */
+    --accent-3: #6ec9a0; /* verde - futuro */
+    --accent-4: #c9b56e; /* âmbar - sabedoria */
+    --accent-5: #a06ec9; /* roxo - risco */
+    --accent-6: #6ec9c9; /* ciano - outros */
+  }
+
+  body {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background atmosphere */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 50% at 20% 20%, rgba(201,169,110,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 80% 80%, rgba(110,159,201,0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 24px 100px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 64px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+
+  .header h1 {
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .header h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 1.1rem;
+    font-weight: 300;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Input section */
+  .input-section {
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  .input-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .decision-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 300;
+    resize: none;
+    outline: none;
+    min-height: 120px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    line-height: 1.5;
+  }
+
+  .decision-input::placeholder { color: var(--muted); opacity: 0.5; }
+
+  .decision-input:focus {
+    border-color: rgba(201,169,110,0.4);
+    box-shadow: 0 0 0 3px rgba(201,169,110,0.06), 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .analyze-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 18px 32px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    color: var(--gold);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .analyze-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .analyze-btn:hover::before { transform: scaleX(1); }
+  .analyze-btn:hover { color: var(--bg); }
+  .analyze-btn span { position: relative; z-index: 1; }
+  .analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .analyze-btn:disabled::before { display: none; }
+
+  /* Loading */
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 60px 0;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .loading.active { display: block; }
+
+  .loading-orb {
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(201,169,110,0.3);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    animation: spin 1.2s linear infinite;
+  }
+
+  .loading p {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 1rem;
+  }
+
+  /* Lenses grid */
+  .lenses-section {
+    display: none;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .lenses-section.active { display: block; }
+
+  .lenses-header {
+    text-align: center;
+    margin: 64px 0 40px;
+  }
+
+  .lenses-header h2 {
+    font-size: 1.8rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .decision-echo {
+    font-size: 1.4rem;
+    color: var(--text);
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  .lenses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .lens-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    animation: cardReveal 0.5s ease both;
+  }
+
+  .lens-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+
+  .lens-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .lens-card[data-lens="razao"]::before { background: var(--accent-1); }
+  .lens-card[data-lens="razao"]:hover { border-color: rgba(110,159,201,0.3); }
+
+  .lens-card[data-lens="emocao"]::before { background: var(--accent-2); }
+  .lens-card[data-lens="emocao"]:hover { border-color: rgba(201,110,110,0.3); }
+
+  .lens-card[data-lens="futuro"]::before { background: var(--accent-3); }
+  .lens-card[data-lens="futuro"]:hover { border-color: rgba(110,201,160,0.3); }
+
+  .lens-card[data-lens="sabedoria"]::before { background: var(--accent-4); }
+  .lens-card[data-lens="sabedoria"]:hover { border-color: rgba(201,181,110,0.3); }
+
+  .lens-card[data-lens="risco"]::before { background: var(--accent-5); }
+  .lens-card[data-lens="risco"]:hover { border-color: rgba(160,110,201,0.3); }
+
+  .lens-card[data-lens="outros"]::before { background: var(--accent-6); }
+  .lens-card[data-lens="outros"]:hover { border-color: rgba(110,201,201,0.3); }
+
+  .lens-icon {
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .lens-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .lens-card[data-lens="razao"] .lens-name { color: var(--accent-1); }
+  .lens-card[data-lens="emocao"] .lens-name { color: var(--accent-2); }
+  .lens-card[data-lens="futuro"] .lens-name { color: var(--accent-3); }
+  .lens-card[data-lens="sabedoria"] .lens-name { color: var(--accent-4); }
+  .lens-card[data-lens="risco"] .lens-name { color: var(--accent-5); }
+  .lens-card[data-lens="outros"] .lens-name { color: var(--accent-6); }
+
+  .lens-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .lens-content {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* Verdict */
+  .verdict-section {
+    background: var(--surface);
+    border: 1px solid rgba(201,169,110,0.2);
+    border-radius: 6px;
+    padding: 40px;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .verdict-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .verdict-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .verdict-text {
+    font-size: 1.3rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  .verdict-question {
+    font-style: italic;
+    color: var(--gold);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Reset */
+  .reset-btn {
+    display: block;
+    margin: 40px auto 0;
+    padding: 12px 32px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .reset-btn:hover { border-color: var(--muted); color: var(--text); }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes cardReveal {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .lens-card:nth-child(1) { animation-delay: 0.05s; }
+  .lens-card:nth-child(2) { animation-delay: 0.1s; }
+  .lens-card:nth-child(3) { animation-delay: 0.15s; }
+  .lens-card:nth-child(4) { animation-delay: 0.2s; }
+  .lens-card:nth-child(5) { animation-delay: 0.25s; }
+  .lens-card:nth-child(6) { animation-delay: 0.3s; }
+
+  .error-msg {
+    display: none;
+    color: var(--accent-2);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid rgba(201,110,110,0.2);
+    border-radius: 4px;
+    background: rgba(201,110,110,0.05);
+  }
+
+  .error-msg.active { display: block; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="header">
+    <div class="header-eyebrow">Ferramenta de clareza</div>
+    <h1>O <em>Espelho</em><br>de Decisões</h1>
+    <p>Toda decisão difícil tem seis faces. Esta ferramenta ilumina cada uma delas — e depois te entrega a pergunta que realmente importa.</p>
+  </header>
+
+  <section class="input-section">
+    <label class="input-label" for="decision">Qual é a sua decisão?</label>
+    <textarea
+      id="decision"
+      class="decision-input"
+      placeholder="Ex: Devo aceitar essa proposta de emprego em outra cidade? / Devo terminar esse relacionamento? / Devo abrir meu próprio negócio?"
+      rows="4"
+    ></textarea>
+    <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">
+      <span>Revelar as seis perspectivas →</span>
+    </button>
+    <div class="error-msg" id="errorMsg"></div>
+  </section>
+
+  <div class="loading" id="loading">
+    <div class="loading-orb"></div>
+    <p>O espelho está refletindo...</p>
+  </div>
+
+  <section class="lenses-section" id="lensesSection">
+    <div class="lenses-header">
+      <h2>Você perguntou sobre</h2>
+      <div class="decision-echo" id="decisionEcho"></div>
+    </div>
+
+    <div class="lenses-grid" id="lensesGrid"></div>
+
+    <div class="verdict-section" id="verdictSection">
+      <div class="verdict-label">Síntese do espelho</div>
+      <div class="verdict-text" id="verdictText"></div>
+      <div class="verdict-question" id="verdictQuestion"></div>
+    </div>
+
+    <button class="reset-btn" onclick="reset()">← Nova decisão</button>
+  </section>
+
+</div>
+
+<script>
+const LENSES = [
+  { key: 'razao',    icon: '◈', name: 'Razão',    title: 'O que os dados dizem' },
+  { key: 'emocao',   icon: '◉', name: 'Emoção',   title: 'O que o corpo sente' },
+  { key: 'futuro',   icon: '◬', name: 'Futuro',   title: 'Daqui a 10 anos' },
+  { key: 'sabedoria',icon: '◎', name: 'Sabedoria', title: 'O que um sábio diria' },
+  { key: 'risco',    icon: '◧', name: 'Risco',    title: 'O que pode dar errado' },
+  { key: 'outros',   icon: '◌', name: 'Impacto',  title: 'Quem mais é afetado' },
+];
+
+async function analyze() {
+  const textarea = document.getElementById('decision');
+  const decision = textarea.value.trim();
+
+  if (!decision || decision.length < 10) {
+    showError('Por favor, descreva sua decisão com um pouco mais de detalhe.');
+    return;
+  }
+
+  hideError();
+  document.getElementById('analyzeBtn').disabled = true;
+  document.querySelector('.input-section').style.opacity = '0.4';
+  document.querySelector('.input-section').style.pointerEvents = 'none';
+  document.getElementById('loading').classList.add('active');
+
+  const prompt = `Você é uma ferramenta de clareza para decisões difíceis. O usuário precisa decidir:
+
+"${decision}"
+
+Analise esta decisão através de EXATAMENTE 6 lentes. Para cada lente, escreva 2-3 frases diretas, honestas e profundas. Não seja genérico — seja específico para ESTA decisão.
+
+Depois, escreva uma síntese e a pergunta mais importante que o usuário deveria se fazer.
+
+Responda APENAS em JSON válido, sem markdown, sem explicações fora do JSON:
+
+{
+  "razao": "texto sobre fatos, lógica, prós e contras objetivos",
+  "emocao": "texto sobre o que os sentimentos, o corpo e o instinto dizem",
+  "futuro": "texto sobre como essa decisão parece daqui a 10 anos",
+  "sabedoria": "texto com o conselho que uma pessoa sábia e experiente daria",
+  "risco": "texto sobre o que pode dar errado e o pior cenário realista",
+  "outros": "texto sobre como isso afeta as pessoas ao redor",
+  "sintese": "2-3 frases que sintetizam tudo que foi dito, sem julgamento",
+  "pergunta_chave": "A única pergunta mais importante que o usuário precisa responder antes de decidir (formule como uma pergunta direta e profunda)"
+}`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const raw = data.content.map(b => b.text || '').join('');
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(clean);
+
+    renderResult(decision, result);
+  } catch (e) {
+    showError('Algo correu mal ao analisar. Tente novamente.');
+    document.getElementById('analyzeBtn').disabled = false;
+    document.querySelector('.input-section').style.opacity = '1';
+    document.querySelector('.input-section').style.pointerEvents = 'all';
+  } finally {
+    document.getElementById('loading').classList.remove('active');
+  }
+}
+
+function renderResult(decision, result) {
+  const truncated = decision.length > 80 ? decision.slice(0, 80) + '...' : decision;
+  document.getElementById('decisionEcho').textContent = `"${truncated}"`;
+
+  const grid = document.getElementById('lensesGrid');
+  grid.innerHTML = '';
+
+  LENSES.forEach(l => {
+    const card = document.createElement('div');
+    card.className = 'lens-card';
+    card.dataset.lens = l.key;
+    card.innerHTML = `
+      <span class="lens-icon">${l.icon}</span>
+      <div class="lens-name">${l.name}</div>
+      <div class="lens-title">${l.title}</div>
+      <div class="lens-content">${result[l.key] || ''}</div>
+    `;
+    grid.appendChild(card);
+  });
+
+  document.getElementById('verdictText').textContent = result.sintese || '';
+  document.getElementById('verdictQuestion').textContent = result.pergunta_chave
+    ? `A pergunta que você precisa responder: ${result.pergunta_chave}`
+    : '';
+
+  document.getElementById('lensesSection').classList.add('active');
+  document.getElementById('lensesSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function reset() {
+  document.getElementById('lensesSection').classList.remove('active');
+  document.getElementById('decision').value = '';
+  document.getElementById('analyzeBtn').disabled = false;
+  document.querySelector('.input-section').style.opacity = '1';
+  document.querySelector('.input-section').style.pointerEvents = 'all';
+  hideError();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('active');
+}
+
+function hideError() {
+  document.getElementById('errorMsg').classList.remove('active');
+}
+
+document.getElementById('decision').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) analyze();
+});
+</script>
+</body>
+</html>
