@@ -7,529 +7,198 @@
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
 :root{
-  --night:#111010;
-  --deep:#1c1a18;
-  --warm:#2a2724;
-  --surface:#302d2a;
-  --border:rgba(255,255,255,0.07);
-  --border2:rgba(255,255,255,0.04);
-  --amber:#c49a3c;
-  --amber-dim:rgba(196,154,60,0.1);
-  --amber-mid:rgba(196,154,60,0.2);
-  --text:#e8e0d0;
-  --muted:#8a8070;
-  --faint:#4a4540;
-  --white:rgba(255,255,255,0.9);
-
-  --a1:#5b8fa8; --a2:#a85b5b; --a3:#5ba87a;
-  --a4:#a8955b; --a5:#7a5ba8; --a6:#5ba8a8;
+  --night:#111010;--deep:#1c1a18;--warm:#2a2724;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.04);
+  --amber:#c49a3c;--amber-dim:rgba(196,154,60,0.1);--amber-mid:rgba(196,154,60,0.2);
+  --text:#e8e0d0;--muted:#8a8070;--faint:#4a4540;--white:rgba(255,255,255,0.9);
+  --a1:#5b8fa8;--a2:#a85b5b;--a3:#5ba87a;--a4:#a8955b;--a5:#7a5ba8;--a6:#5ba8a8;
 }
-
 html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Crimson Pro',Georgia,serif;background:var(--night);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px}
 
-body{
-  font-family:'Crimson Pro',Georgia,serif;
-  background:var(--night);
-  color:var(--text);
-  min-height:100vh;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
-
-/* grain */
-body::before{
-  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.04;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size:200px;
-}
-
-/* ── SCREEN SYSTEM ── */
-.screen{
-  display:none;
-  min-height:100vh;
-  position:relative;
-  z-index:1;
-}
+.screen{display:none;min-height:100vh;position:relative;z-index:1}
 .screen.on{display:flex;flex-direction:column}
 
-/* ── SHARED ── */
-.mono{font-family:'IBM Plex Mono',monospace}
-.serif{font-family:'Lora',Georgia,serif}
-
-.label{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9px;letter-spacing:.3em;text-transform:uppercase;
-  color:var(--faint);
-}
-
-/* ── SCREEN 1: ENTRY ── */
-#sEntry{
-  align-items:center;justify-content:center;
-  padding:48px 24px 64px;
-  min-height:100vh;
-}
-
+/* ── ENTRY ── */
+#sEntry{align-items:center;justify-content:center;padding:48px 24px 64px}
 .entry-inner{width:100%;max-width:520px}
-
-.brand{margin-bottom:48px}
-.brand-word{
-  font-family:'Lora',serif;
-  font-size:2.6rem;font-weight:700;
-  letter-spacing:.08em;
-  color:var(--white);
-  display:block;line-height:1;
-  margin-bottom:6px;
-}
+.brand{margin-bottom:40px}
+.brand-word{font-family:'Lora',serif;font-size:2.6rem;font-weight:700;letter-spacing:.08em;color:var(--white);display:block;line-height:1;margin-bottom:6px}
 .brand-word em{font-style:italic;color:var(--amber)}
-.brand-sub{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9px;letter-spacing:.25em;text-transform:uppercase;
-  color:var(--faint);
-}
-
-.entry-prompt{
-  font-family:'Lora',serif;
-  font-size:1.5rem;font-weight:400;font-style:italic;
-  color:var(--text);line-height:1.35;
-  margin-bottom:28px;
-}
+.brand-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--faint)}
+.entry-prompt{font-family:'Lora',serif;font-size:1.5rem;font-weight:400;font-style:italic;color:var(--text);line-height:1.35;margin-bottom:10px}
 .entry-prompt em{color:var(--amber);font-style:normal;font-weight:700}
-
-.entry-ta{
-  width:100%;
-  background:transparent;
-  border:none;
-  border-bottom:1px solid var(--border);
-  padding:16px 0;
-  color:var(--text);
-  font-family:'Crimson Pro',serif;
-  font-size:1.2rem;font-weight:300;
-  resize:none;outline:none;
-  min-height:140px;
-  line-height:1.65;
-  transition:border-color .3s;
-  caret-color:var(--amber);
-}
+.entry-welcome{font-family:'Crimson Pro',serif;font-size:1rem;font-weight:300;font-style:italic;color:var(--muted);line-height:1.7;margin-bottom:24px;min-height:1.7rem;opacity:0;transition:opacity .8s ease}
+.entry-welcome.on{opacity:1}
+.entry-ta{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);padding:16px 0;color:var(--text);font-family:'Crimson Pro',serif;font-size:1.2rem;font-weight:300;resize:none;outline:none;min-height:140px;line-height:1.65;transition:border-color .3s;caret-color:var(--amber)}
 .entry-ta::placeholder{color:var(--faint);font-style:italic}
 .entry-ta:focus{border-bottom-color:var(--amber)}
-
-.entry-hint{
-  margin-top:10px;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9px;letter-spacing:.15em;color:var(--faint);
-  display:flex;justify-content:space-between;align-items:center;
-}
-
-.entry-btn{
-  margin-top:32px;width:100%;
-  padding:18px 24px;
-  background:transparent;
-  border:1px solid rgba(196,154,60,0.3);
-  border-radius:2px;
-  color:var(--amber);
-  font-family:'Lora',serif;font-size:1rem;font-style:italic;
-  cursor:pointer;
-  transition:all .3s;
-  display:flex;align-items:center;justify-content:space-between;
-  letter-spacing:.02em;
-}
+.entry-hint{margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--faint);display:flex;justify-content:space-between}
+.entry-btn{margin-top:32px;width:100%;padding:18px 24px;background:transparent;border:1px solid rgba(196,154,60,0.3);border-radius:2px;color:var(--amber);font-family:'Lora',serif;font-size:1rem;font-style:italic;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:space-between;letter-spacing:.02em}
 .entry-btn:hover{background:var(--amber-dim);border-color:var(--amber)}
 .entry-btn:disabled{opacity:.25;cursor:not-allowed}
 .entry-btn .arr{transition:transform .3s;font-style:normal}
 .entry-btn:hover .arr{transform:translateX(4px)}
-
-.entry-welcome{
-  font-family:'Crimson Pro',serif;
-  font-size:1rem;font-weight:300;font-style:italic;
-  color:var(--muted);line-height:1.7;
-  margin-bottom:28px;min-height:1.7rem;
-  opacity:0;transition:opacity .8s ease;
-}
-.entry-welcome.on{opacity:1}
-
-/* history strip */
-.history-strip{margin-top:48px;border-top:1px solid var(--border2);padding-top:24px}
-.history-strip-label{margin-bottom:14px}
-.hist-entries{display:flex;flex-direction:column;gap:1px}
-.hist-entry{
-  padding:12px 0;border-bottom:1px solid var(--border2);
-  cursor:pointer;transition:all .2s;
-  display:flex;align-items:flex-start;gap:16px;
-}
+.history-strip{margin-top:40px;border-top:1px solid var(--border2);padding-top:20px;display:none}
+.hist-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint);margin-bottom:12px}
+.hist-entry{padding:10px 0;border-bottom:1px solid var(--border2);cursor:pointer;display:flex;gap:16px;align-items:flex-start;transition:all .2s}
 .hist-entry:hover .hist-text{color:var(--text)}
 .hist-date{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--faint);letter-spacing:.1em;white-space:nowrap;padding-top:2px}
 .hist-text{font-size:.9rem;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;transition:color .2s}
 
-/* ── SCREEN 2: LOADING ── */
-#sLoading{
-  align-items:center;justify-content:center;
-  gap:0;
-}
-
+/* ── LOADING ── */
+#sLoading{align-items:center;justify-content:center}
 .loading-scene{text-align:center}
-.loading-glyph{
-  font-family:'Lora',serif;
-  font-size:3.5rem;font-weight:700;
-  color:var(--amber);
-  display:block;margin-bottom:32px;
-  animation:glyphPulse 2.4s ease-in-out infinite;
-}
+.loading-glyph{font-family:'Lora',serif;font-size:3.5rem;font-weight:700;color:var(--amber);display:block;margin-bottom:32px;animation:glyphPulse 2.4s ease-in-out infinite}
 .loading-bars{display:flex;flex-direction:column;gap:10px;align-items:center;margin-bottom:28px}
-.loading-bar{
-  height:1px;background:var(--faint);
-  animation:barPulse 1.6s ease-in-out infinite;
-}
+.loading-bar{height:1px;background:var(--faint);animation:barPulse 1.6s ease-in-out infinite}
 .loading-bar:nth-child(1){width:160px;animation-delay:0s}
 .loading-bar:nth-child(2){width:100px;animation-delay:.25s}
 .loading-bar:nth-child(3){width:140px;animation-delay:.5s}
 .loading-bar:nth-child(4){width:80px;animation-delay:.75s}
-.loading-msg{
-  font-family:'Lora',serif;font-style:italic;
-  color:var(--muted);font-size:.95rem;
-  transition:opacity .4s;
-}
+.loading-msg{font-family:'Lora',serif;font-style:italic;color:var(--muted);font-size:.95rem;transition:opacity .4s}
 
-/* ── SCREEN 3: REVEAL ── */
+/* ── REVEAL ── */
 #sReveal{padding:0;overflow:hidden}
-
-/* header strip */
-.reveal-header{
-  padding:20px 28px;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--night);
-  position:sticky;top:0;z-index:10;
-}
+.reveal-header{padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--night);position:sticky;top:0;z-index:10}
 .reveal-brand{font-family:'Lora',serif;font-size:.9rem;font-weight:700;letter-spacing:.1em;color:var(--amber)}
-.reveal-progress{
-  font-family:'IBM Plex Mono',monospace;font-size:9px;
-  letter-spacing:.2em;color:var(--faint);text-transform:uppercase;
-}
-
-/* scroll container */
+.reveal-progress{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
 .reveal-scroll{flex:1;overflow-y:auto;scroll-snap-type:y mandatory}
 .reveal-scroll::-webkit-scrollbar{width:2px}
 .reveal-scroll::-webkit-scrollbar-thumb{background:var(--faint);border-radius:2px}
-
-/* each panel */
-.panel{
-  min-height:100vh;
-  scroll-snap-align:start;
-  display:flex;flex-direction:column;justify-content:center;
-  padding:48px 28px 64px;
-  max-width:640px;
-  margin:0 auto;
-  width:100%;
-  opacity:0;
-  transform:translateY(20px);
-  transition:opacity .7s ease, transform .7s ease;
-}
+.panel{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:48px 28px 64px;max-width:640px;margin:0 auto;width:100%;opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
 .panel.visible{opacity:1;transform:translateY(0)}
-
-/* lens panel */
-.panel-lens-tag{
-  display:flex;align-items:center;gap:10px;
-  margin-bottom:20px;
-}
+.panel-lens-tag{display:flex;align-items:center;gap:10px;margin-bottom:20px}
 .lens-color-line{width:28px;height:2px;border-radius:2px;flex-shrink:0}
-.panel[data-l=razao]    .lens-color-line{background:var(--a1)}
-.panel[data-l=emocao]   .lens-color-line{background:var(--a2)}
-.panel[data-l=futuro]   .lens-color-line{background:var(--a3)}
-.panel[data-l=sabedoria].lens-color-line{background:var(--a4)}
-.panel[data-l=risco]    .lens-color-line{background:var(--a5)}
-.panel[data-l=outros]   .lens-color-line{background:var(--a6)}
-.panel[data-l=razao]    .lens-label-name{color:var(--a1)}
-.panel[data-l=emocao]   .lens-label-name{color:var(--a2)}
-.panel[data-l=futuro]   .lens-label-name{color:var(--a3)}
-.panel[data-l=sabedoria].lens-label-name{color:var(--a4)}
-.panel[data-l=risco]    .lens-label-name{color:var(--a5)}
-.panel[data-l=outros]   .lens-label-name{color:var(--a6)}
-
-.lens-label-name{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9px;letter-spacing:.3em;text-transform:uppercase;
-}
-.panel-num{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9px;color:var(--faint);letter-spacing:.1em;
-  margin-left:auto;
-}
-
-.panel-title{
-  font-family:'Lora',serif;
-  font-size:1.5rem;font-weight:500;
-  color:var(--white);
-  margin-bottom:20px;line-height:1.25;
-}
-
-.panel-body{
-  font-size:1.1rem;font-weight:300;
-  line-height:1.85;color:var(--muted);
-  font-style:italic;
-}
-
-.panel-next{
-  margin-top:40px;
-  background:transparent;border:none;
-  color:var(--faint);
-  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;
-  cursor:pointer;transition:color .2s;
-  display:flex;align-items:center;gap:8px;padding:0;
-}
+.panel[data-l=razao] .lens-color-line{background:var(--a1)}
+.panel[data-l=emocao] .lens-color-line{background:var(--a2)}
+.panel[data-l=futuro] .lens-color-line{background:var(--a3)}
+.panel[data-l=sabedoria] .lens-color-line{background:var(--a4)}
+.panel[data-l=risco] .lens-color-line{background:var(--a5)}
+.panel[data-l=outros] .lens-color-line{background:var(--a6)}
+.panel[data-l=razao] .lens-label-name{color:var(--a1)}
+.panel[data-l=emocao] .lens-label-name{color:var(--a2)}
+.panel[data-l=futuro] .lens-label-name{color:var(--a3)}
+.panel[data-l=sabedoria] .lens-label-name{color:var(--a4)}
+.panel[data-l=risco] .lens-label-name{color:var(--a5)}
+.panel[data-l=outros] .lens-label-name{color:var(--a6)}
+.lens-label-name{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase}
+.panel-num{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--faint);letter-spacing:.1em;margin-left:auto}
+.panel-title{font-family:'Lora',serif;font-size:1.5rem;font-weight:500;color:var(--white);margin-bottom:20px;line-height:1.25}
+.panel-body{font-size:1.1rem;font-weight:300;line-height:1.85;color:var(--muted);font-style:italic}
+.panel-next{margin-top:40px;background:transparent;border:none;color:var(--faint);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;transition:color .2s;display:flex;align-items:center;gap:8px;padding:0}
 .panel-next:hover{color:var(--amber)}
 .panel-next::after{content:'↓';font-size:1rem;transition:transform .2s}
 .panel-next:hover::after{transform:translateY(3px)}
-
-/* Synthesis panel */
 .panel-synth{background:var(--deep)}
-.synth-label{margin-bottom:20px}
-.synth-text{
-  font-family:'Lora',serif;
-  font-size:1.15rem;font-weight:400;
-  line-height:1.8;color:var(--text);
-  margin-bottom:32px;
-}
-
-/* Question panel — the ritual moment */
-.panel-question{
-  background:var(--night);
-  align-items:center;text-align:center;
-  padding:64px 28px;
-}
-.q-intro{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9px;letter-spacing:.4em;text-transform:uppercase;
-  color:var(--faint);margin-bottom:40px;
-}
-.q-line{
-  width:1px;height:60px;background:linear-gradient(to bottom,transparent,var(--amber),transparent);
-  margin:0 auto 40px;
-}
-.q-text{
-  font-family:'Lora',serif;
-  font-size:clamp(1.3rem,4vw,1.8rem);
-  font-style:italic;font-weight:400;
-  color:var(--white);
-  line-height:1.45;
-  max-width:460px;
-}
+.synth-text{font-family:'Lora',serif;font-size:1.15rem;font-weight:400;line-height:1.8;color:var(--text);margin-bottom:32px}
+.panel-question{background:var(--night);align-items:center;text-align:center;padding:64px 28px}
+.q-intro{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:var(--faint);margin-bottom:40px}
+.q-line{width:1px;height:60px;background:linear-gradient(to bottom,transparent,var(--amber),transparent);margin:0 auto 40px}
+.q-text{font-family:'Lora',serif;font-size:clamp(1.3rem,4vw,1.8rem);font-style:italic;font-weight:400;color:var(--white);line-height:1.45;max-width:460px}
 .q-em{color:var(--amber)}
-
-/* Pattern insight */
-.pattern-strip{
-  margin:20px 0 0;
-  padding:16px 20px;
-  border:1px solid rgba(196,154,60,0.15);
-  border-radius:2px;
-  background:var(--amber-dim);
-  display:none;
-}
+.pattern-strip{margin:20px 0 0;padding:16px 20px;border:1px solid rgba(196,154,60,0.15);border-radius:2px;background:var(--amber-dim);display:none}
 .pattern-strip.on{display:block}
-.pattern-strip p{
-  font-size:.85rem;color:rgba(196,154,60,0.7);
-  line-height:1.6;font-style:italic;
-}
+.pattern-strip p{font-size:.85rem;color:rgba(196,154,60,0.7);line-height:1.6;font-style:italic}
 
-/* ── SCREEN 4: CONVERSATION ── */
-#sConversation{
-  padding:0;
-  overflow:hidden;
-  max-width:640px;
-  margin:0 auto;
-  width:100%;
-}
-
-.conv-header{
-  padding:20px 28px;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--night);
-  position:sticky;top:0;z-index:10;
-}
+/* ── CONVERSATION ── */
+#sConversation{padding:0;overflow:hidden;max-width:640px;margin:0 auto;width:100%}
+.conv-header{padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--night);position:sticky;top:0;z-index:10}
 .conv-brand{font-family:'Lora',serif;font-size:.9rem;font-weight:700;letter-spacing:.1em;color:var(--amber)}
 .conv-actions{display:flex;gap:8px}
-.small-btn{
-  padding:7px 14px;background:transparent;
-  border:1px solid var(--border);border-radius:2px;
-  color:var(--muted);
-  font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;
-  cursor:pointer;transition:all .2s;
-}
+.small-btn{padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:2px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .2s}
 .small-btn:hover{border-color:var(--amber);color:var(--amber)}
-
-.conv-thread{
-  flex:1;overflow-y:auto;
-  padding:32px 28px;
-  display:flex;flex-direction:column;
-  gap:0;
-}
+.conv-thread{flex:1;overflow-y:auto;padding:32px 28px;display:flex;flex-direction:column;gap:0}
 .conv-thread::-webkit-scrollbar{width:2px}
 .conv-thread::-webkit-scrollbar-thumb{background:var(--faint);border-radius:2px}
-
-/* conversation entries — NOT bubbles. like a journal. */
-.conv-entry{
-  padding:20px 0;
-  border-bottom:1px solid var(--border2);
-  animation:entryFade .4s ease both;
-}
+.conv-entry{padding:20px 0;border-bottom:1px solid var(--border2);animation:entryFade .4s ease both}
 .conv-entry:last-child{border-bottom:none}
-
-.conv-who{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:8px;letter-spacing:.3em;text-transform:uppercase;
-  margin-bottom:10px;
-}
+.conv-who{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:10px}
 .conv-entry.clare .conv-who{color:var(--amber)}
 .conv-entry.user .conv-who{color:var(--faint)}
-
-.conv-text{
-  font-size:1.05rem;font-weight:300;line-height:1.8;
-  color:var(--text);
-}
+.conv-text{font-size:1.05rem;font-weight:300;line-height:1.8;color:var(--text)}
 .conv-entry.clare .conv-text{font-style:italic;color:var(--muted)}
 .conv-entry.user .conv-text{color:var(--text)}
-
-/* typing */
-.typing-entry .conv-text{
-  display:flex;gap:5px;align-items:center;padding:4px 0;
-}
-.t-dot{
-  width:4px;height:4px;border-radius:50%;background:var(--muted);
-  animation:tdot 1.2s ease-in-out infinite;
-}
+.typing-entry .conv-text{display:flex;gap:5px;align-items:center;padding:4px 0}
+.t-dot{width:4px;height:4px;border-radius:50%;background:var(--muted);animation:tdot 1.2s ease-in-out infinite}
 .t-dot:nth-child(2){animation-delay:.2s}
 .t-dot:nth-child(3){animation-delay:.4s}
-
-/* input area */
-.conv-input-area{
-  border-top:1px solid var(--border);
-  padding:20px 28px;
-  background:var(--night);
-}
-.conv-ta{
-  width:100%;background:transparent;border:none;
-  border-bottom:1px solid var(--border);
-  padding:12px 0;color:var(--text);
-  font-family:'Crimson Pro',serif;font-size:1.05rem;font-weight:300;
-  resize:none;outline:none;min-height:52px;max-height:120px;
-  line-height:1.6;transition:border-color .2s;
-  caret-color:var(--amber);
-}
+.conv-input-area{border-top:1px solid var(--border);padding:20px 28px;background:var(--night)}
+.conv-ta{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);padding:12px 0;color:var(--text);font-family:'Crimson Pro',serif;font-size:1.05rem;font-weight:300;resize:none;outline:none;min-height:52px;max-height:120px;line-height:1.6;transition:border-color .2s;caret-color:var(--amber)}
 .conv-ta::placeholder{color:var(--faint);font-style:italic;font-size:.95rem}
 .conv-ta:focus{border-bottom-color:var(--amber)}
-.conv-footer{
-  margin-top:10px;
-  display:flex;align-items:center;justify-content:space-between;
-}
+.conv-footer{margin-top:10px;display:flex;align-items:center;justify-content:space-between}
 .conv-hint{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.15em;color:var(--faint)}
-.send-btn{
-  padding:8px 20px;background:transparent;
-  border:1px solid rgba(196,154,60,.3);border-radius:2px;
-  color:var(--amber);
-  font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;
-  cursor:pointer;transition:all .2s;
-}
+.send-btn{padding:8px 20px;background:transparent;border:1px solid rgba(196,154,60,.3);border-radius:2px;color:var(--amber);font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .2s}
 .send-btn:hover{background:var(--amber-dim);border-color:var(--amber)}
 .send-btn:disabled{opacity:.3;cursor:not-allowed}
 
-/* ── EXPORT ── */
-.modal-bg{
-  display:none;position:fixed;inset:0;z-index:100;
-  background:rgba(10,10,9,.85);backdrop-filter:blur(4px);
-  align-items:center;justify-content:center;padding:24px;
-}
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;z-index:100;background:rgba(10,10,9,.85);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:24px}
 .modal-bg.on{display:flex}
-.modal{
-  background:var(--deep);border:1px solid var(--border);
-  border-radius:3px;max-width:560px;width:100%;
-  max-height:85vh;overflow-y:auto;padding:36px;
-}
+.modal{background:var(--deep);border:1px solid var(--border);border-radius:3px;max-width:560px;width:100%;max-height:85vh;overflow-y:auto;padding:36px}
 .modal h3{font-family:'Lora',serif;font-size:1.3rem;font-style:italic;margin-bottom:20px;color:var(--white)}
-.modal-pre{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.9;
-  color:var(--muted);background:var(--night);border:1px solid var(--border);
-  border-radius:2px;padding:20px;max-height:260px;overflow-y:auto;
-  white-space:pre-wrap;margin-bottom:20px;
-}
+.modal-pre{font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.9;color:var(--muted);background:var(--night);border:1px solid var(--border);border-radius:2px;padding:20px;max-height:260px;overflow-y:auto;white-space:pre-wrap;margin-bottom:20px}
 .modal-btns{display:flex;gap:10px;justify-content:flex-end}
 
-/* ── ANIMATIONS ── */
 @keyframes glyphPulse{0%,100%{opacity:.4;transform:scale(.97)}50%{opacity:1;transform:scale(1)}}
 @keyframes barPulse{0%,100%{transform:scaleX(.2);opacity:.2}50%{transform:scaleX(1);opacity:.7}}
 @keyframes entryFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes tdot{0%,80%,100%{opacity:.15}40%{opacity:1}}
-
-/* panel intersection observer transition */
-@keyframes panelIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
 
-<!-- ══ SCREEN 1: ENTRY ══ -->
 <div class="screen on" id="sEntry">
-  <div class="entry-inner" style="margin:auto;padding:48px 24px 64px">
-
+  <div class="entry-inner" style="margin:auto">
     <div class="brand">
       <span class="brand-word">CLA<em>RÊ</em></span>
       <span class="brand-sub">O espelho que fala de volta</span>
     </div>
-
-    <p class="entry-prompt">
-      Qual decisão você<br>ainda <em>não conseguiu</em> tomar?
-    </p>
-
+    <p class="entry-prompt">Qual decisão você<br>ainda <em>não conseguiu</em> tomar?</p>
     <p class="entry-welcome" id="entryWelcome"></p>
-
     <textarea id="entryTa" class="entry-ta" rows="5"
       placeholder="Escreva com suas próprias palavras. Não precisa ser organizado. Quanto mais honesto, mais preciso o espelho."></textarea>
     <div class="entry-hint">
-      <span class="mono" style="font-size:9px;letter-spacing:.1em">↵ ctrl+enter para continuar</span>
-      <span id="charCount" class="mono" style="font-size:9px;color:var(--faint)">0</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:9px">ctrl+enter para continuar</span>
+      <span id="charCount" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--faint)">0</span>
     </div>
-
     <button class="entry-btn" id="entryBtn" disabled>
-      <span class="serif" style="font-style:italic">Deixar CLARÊ refletir</span>
+      <span style="font-family:'Lora',serif;font-style:italic">Deixar CLARÊ refletir</span>
       <span class="arr">→</span>
     </button>
-
-    <div class="history-strip" id="historyStrip" style="display:none">
-      <div class="label history-strip-label">Decisões anteriores</div>
-      <div class="hist-entries" id="histEntries"></div>
+    <div class="history-strip" id="historyStrip">
+      <div class="hist-label">Decisões anteriores</div>
+      <div id="histEntries"></div>
     </div>
-
   </div>
 </div>
 
-<!-- ══ SCREEN 2: LOADING ══ -->
 <div class="screen" id="sLoading">
-  <div class="loading-scene" style="margin:auto">
-    <span class="loading-glyph serif">◎</span>
+  <div class="loading-scene" style="margin:auto;text-align:center">
+    <span class="loading-glyph" style="font-family:'Lora',serif">◎</span>
     <div class="loading-bars">
-      <div class="loading-bar"></div>
-      <div class="loading-bar"></div>
-      <div class="loading-bar"></div>
-      <div class="loading-bar"></div>
+      <div class="loading-bar"></div><div class="loading-bar"></div>
+      <div class="loading-bar"></div><div class="loading-bar"></div>
     </div>
     <p class="loading-msg" id="loadMsg">CLARÊ está lendo...</p>
   </div>
 </div>
 
-<!-- ══ SCREEN 3: REVEAL ══ -->
 <div class="screen" id="sReveal">
   <div class="reveal-header">
-    <span class="reveal-brand serif">CLARÊ</span>
-    <span class="reveal-progress mono" id="revealProgress">perspectiva 1 de 8</span>
+    <span class="reveal-brand">CLARÊ</span>
+    <span class="reveal-progress" id="revealProgress">perspectiva 1 de 8</span>
   </div>
   <div class="reveal-scroll" id="revealScroll"></div>
 </div>
 
-<!-- ══ SCREEN 4: CONVERSATION ══ -->
 <div class="screen" id="sConversation">
   <div class="conv-header">
-    <span class="conv-brand serif">CLARÊ</span>
+    <span class="conv-brand">CLARÊ</span>
     <div class="conv-actions">
       <button class="small-btn" id="exportBtn">↓ exportar</button>
       <button class="small-btn" id="newBtn">+ nova</button>
@@ -537,8 +206,7 @@ body::before{
   </div>
   <div class="conv-thread" id="convThread"></div>
   <div class="conv-input-area">
-    <textarea id="convTa" class="conv-ta" rows="2"
-      placeholder="Reaja, discorde, aprofunde..."></textarea>
+    <textarea id="convTa" class="conv-ta" rows="2" placeholder="Reaja, discorde, aprofunde..."></textarea>
     <div class="conv-footer">
       <span class="conv-hint">enter para enviar · shift+enter para nova linha</span>
       <button class="send-btn" id="sendBtn" disabled>enviar</button>
@@ -546,7 +214,6 @@ body::before{
   </div>
 </div>
 
-<!-- EXPORT MODAL -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h3>Exportar esta sessão</h3>
@@ -559,12 +226,10 @@ body::before{
 </div>
 
 <script>
-// ── STATE ────────────────────────────────────────────────────────────────
+// ─── STATE ────────────────────────────────────────────────────────────────────
 const S = {
-  text: '',
-  analysis: null,
-  chat: [],
-  sessions: JSON.parse(localStorage.getItem('clare_v3')||'[]'),
+  text:'', analysis:null, chat:[],
+  sessions: JSON.parse(localStorage.getItem('clare_v4')||'[]'),
   activeId: null,
 };
 
@@ -577,51 +242,380 @@ const LENSES = [
   {key:'outros',   name:'Impacto',  title:'Quem mais é afetado'},
 ];
 
-const LOAD_MSGS = [
-  'CLARÊ está lendo...',
-  'Pesando cada perspectiva...',
-  'Ouvindo o que os fatos dizem...',
-  'Procurando o que você ainda não viu...',
-  'Formulando a pergunta certa...',
-];
+// ─── TEXT ANALYSIS ENGINE ─────────────────────────────────────────────────────
+function analyzeText(raw) {
+  const t = raw.toLowerCase();
+  const words = t.split(/\s+/);
+  const wordCount = words.length;
 
-// ── SCREEN SWITCHING ─────────────────────────────────────────────────────
+  // ── THEME DETECTION ──────────────────────────────────────────────
+  const themes = {
+    emprego:     /emprego|trabalho|demiss|cargo|empresa|chefe|salário|salario|carreira|profiss|promoção|promovido|colega|escritório|office|reunião|líder|gestor|equipe/.test(t),
+    relacionamento:/relacionamento|namoro|namorad|casamento|casad|divorc|termin|separar|parceiro|parceira|amor|ficar|sair|traição|trair|ciúme|briga/.test(t),
+    negocio:     /negócio|negocio|empreend|startup|abrir|empresa própria|sócio|produto|cliente|receita|investir|mercado|serviço/.test(t),
+    mudanca:     /mudar de cidade|mudar de país|morar em|me mudar|mudança|imigrar|relocar|sair do país|sair da cidade/.test(t),
+    saude:       /saúde|saude|médico|medico|cirurgia|tratamento|doença|doenca|hospital|terapia|psicólogo|psiquiatra|diagnóstico/.test(t),
+    estudo:      /estudar|faculdade|curso|pós|mestrado|doutorado|universidade|vestibular|concurso/.test(t),
+    familia:     /família|familia|filho|filha|pai|mãe|mae|pais|irmão|irmã|parente|adotar|engravidar|gravidez/.test(t),
+  };
+  const activeThemes = Object.entries(themes).filter(([,v])=>v).map(([k])=>k);
+  const mainTheme = activeThemes[0] || 'geral';
+
+  // ── EMOTION SIGNALS ──────────────────────────────────────────────
+  const emotions = {
+    medo:       /medo|receio|assustado|assustada|apavorad|nervoso|nervosa|ansioso|ansiosa|preocupado|preocupada|inseguro|insegura/.test(t),
+    esgotamento:/cansado|cansada|esgotado|esgotada|exausto|exausta|não aguento|nao aguento|não suporto|nao suporto|sufocando|sufocad|exaurid/.test(t),
+    culpa:      /culpa|culpad|responsabilidade|decepcionar|decepcionando|magoar|magoando|prejudicar/.test(t),
+    duvida:     /não sei|nao sei|dúvida|duvida|confuso|confusa|perdido|perdida|incerto|incerta|indeciso|indecisa/.test(t),
+    urgencia:   /urgente|preciso decidir|prazo|tempo acabando|não posso mais|nao posso mais|logo|rápido|rapido/.test(t),
+    esperanca:  /quero|sonho|gostaria|seria incrível|seria incrivel|oportunidade|chance|possibilidade/.test(t),
+    raiva:      /raiva|ódio|odio|raivoso|frustrado|frustrada|irritado|irritada|injusto/.test(t),
+  };
+
+  // ── KEY PHRASES & ENTITIES ──────────────────────────────────────
+  // Extract quoted or highlighted personal references
+  const quotes = (raw.match(/"([^"]+)"/g)||[]).map(q=>q.replace(/"/g,''));
+
+  // Detect time references
+  const timeRefs = {
+    anos:    raw.match(/(\d+)\s*anos?/)?.[1],
+    meses:   raw.match(/(\d+)\s*meses?/)?.[1],
+    semanas: raw.match(/(\d+)\s*semanas?/)?.[1],
+  };
+
+  // Detect people mentioned
+  const people = {
+    conjuge:  /marido|esposa|esposo|mulher|companheiro|companheira/.test(t),
+    filhos:   /filho|filha|crianças|criancas|bebê|bebe/.test(t),
+    pais:     /\bpai\b|\bmãe\b|\bmae\b|\bpais\b|\bparentes\b/.test(t),
+    amigos:   /amigo|amiga|amigos/.test(t),
+    chefe:    /chefe|líder|lider|gestor|gestora|diretor|diretora/.test(t),
+  };
+
+  // Detect what's explicitly at stake
+  const stakes = {
+    financeiro: /dinheiro|salário|salario|renda|pagar|dívida|divida|financeiro|economias|reserva/.test(t),
+    identidade: /quem eu sou|minha identidade|me perder|perder a mim|não me reconheço|nao me reconheco/.test(t),
+    tempo:      /anos da minha vida|perdendo tempo|tempo passando|não tenho mais tempo|nao tenho mais tempo/.test(t),
+    saude_mental:/saúde mental|saude mental|depressão|depressao|ansiedade|pânico|panico|burnout/.test(t),
+  };
+
+  // Text tone signals
+  const isLong        = wordCount > 80;
+  const hasHesitation = /mas|porém|porem|no entanto|contudo|só que|so que|embora/.test(t);
+  const hasNegation   = /não consigo|nao consigo|não sei|nao sei|nunca|jamais|impossível|impossivel/.test(t);
+  const hasBothSides  = (t.match(/\bmas\b|\bporem\b|\bporem\b|\bcontudo\b/g)||[]).length >= 2;
+  const appearsResolved = /acho que já sei|ja sei o que|tenho certeza que|decidi que|vou fazer/.test(t);
+
+  // Extract any explicit "option A vs B" mentions
+  const optionWords = t.match(/(?:ficar|sair|aceitar|recusar|ir|não ir|fazer|não fazer|continuar|parar)/g)||[];
+
+  return { mainTheme, activeThemes, emotions, timeRefs, people, stakes,
+           isLong, hasHesitation, hasNegation, hasBothSides, appearsResolved,
+           quotes, optionWords, wordCount, raw };
+}
+
+// ─── ANALYSIS GENERATOR ───────────────────────────────────────────────────────
+// Builds genuinely different text based on what was written
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function buildAnalysis(ctx) {
+  const { mainTheme, emotions, timeRefs, people, stakes, isLong,
+          hasHesitation, hasBothSides, appearsResolved, optionWords,
+          quotes, wordCount, raw } = ctx;
+
+  // ── Contextual fragments — assembled per situation ──────────────
+
+  // Time fragments
+  const timeFrag = timeRefs.anos
+    ? `Você mencionou ${timeRefs.anos} anos — esse número não é neutro, carrega peso.`
+    : timeRefs.meses
+    ? `${timeRefs.meses} meses é tempo suficiente para saber se algo vai mudar por si só.`
+    : '';
+
+  // People fragments
+  const peopleFrag = people.conjuge ? `Seu parceiro ou parceira faz parte desse cálculo — o que eles sabem sobre o que você está sentindo?`
+    : people.filhos  ? `Filhos aparecem nesse texto. Vale perguntar: você está decidindo para protegê-los, ou usando-os como razão para não decidir?`
+    : people.chefe   ? `Seu chefe ou gestora aparece nesse cenário — isso muda a natureza da decisão, porque envolve poder que não é seu.`
+    : people.pais    ? `Seus pais entram nessa equação. Quanto dessa decisão é sua, e quanto é uma resposta à expectativa deles?`
+    : '';
+
+  // Stakes fragments
+  const stakeFrag = stakes.financeiro ? `O lado financeiro está explícito no que você escreveu. Mas dinheiro raramente é o verdadeiro bloqueio — é a cobertura mais aceitável para outros medos.`
+    : stakes.saude_mental ? `Saúde mental aparece aqui. Isso eleva o nível de urgência — decisões adiadas em estados de esgotamento custam mais do que parecem.`
+    : stakes.tempo ? `Você sente o tempo passando. Esse senso de urgência é real — mas também pode estar distorcendo a perspectiva do que é possível.`
+    : stakes.identidade ? `Há uma questão de identidade por trás disso — não é só o que você vai fazer, é sobre quem você está se tornando.`
+    : '';
+
+  // Emotion fragments
+  const medo_frag = emotions.medo
+    ? pick([`O medo aparece claramente no que você escreveu. A pergunta útil não é "tenho medo?" mas "esse medo está me protegendo de algo real, ou me impedindo de algo necessário?"`,
+            `Medo é informação, não fraqueza. O que especificamente você teme que aconteça — consegue nomear em uma frase?`])
+    : '';
+
+  const esg_frag = emotions.esgotamento
+    ? pick([`O esgotamento que aparece no texto precisa ser levado a sério. Decisões tomadas em estado de exaustão real tendem a ser decisões de fuga — e fuga raramente resolve.`,
+            `Quando o corpo já está esgotado, qualquer caminho parece pesado. Isso distorce a análise. Quanto do que você sente é sobre a decisão, e quanto é sobre o estado em que você está?`])
+    : '';
+
+  const culpa_frag = emotions.culpa
+    ? `Culpa aparece no que você escreveu. Vale perguntar: você está hesitando por responsabilidade genuína, ou por medo de ser visto como egoísta?`
+    : '';
+
+  const raiva_frag = emotions.raiva
+    ? `Há raiva ou frustração nesse texto. Raiva é geralmente uma resposta a uma fronteira que foi cruzada. O que especificamente foi cruzado aqui?`
+    : '';
+
+  // Both-sides fragment
+  const dualFrag = hasBothSides
+    ? `Você apresenta os dois lados — o que fala a favor e o que fala contra. Isso geralmente significa que você já sabe a resposta e está buscando permissão para agir nela.`
+    : hasHesitation
+    ? `O "mas" que aparece no seu texto é o lugar onde a decisão realmente mora. O que vem antes do "mas" é o que você quer. O que vem depois é o que te paralisa.`
+    : '';
+
+  // Apparent resolution
+  const resolFrag = appearsResolved
+    ? `Há uma parte do seu texto que soa como se você já tivesse decidido. Se é assim, o que ainda está impedindo que você aja?`
+    : '';
+
+  // Quote fragment
+  const quoteFrag = quotes.length > 0
+    ? `Você usou as palavras "${quotes[0]}" — guarda isso. Linguagem escolhida revela o que o raciocínio ainda não verbalizou.`
+    : '';
+
+  // ── Theme-specific cores ──────────────────────────────────────────
+  const cores = {
+    emprego: {
+      razao_core: `Separe o que você sabe de fato do que está assumindo. Tem outro emprego garantido ou é um salto no vazio? ${stakes.financeiro ? 'O lado financeiro que você mencionou é real e precisa entrar no cálculo — não como razão para não agir, mas como dado para planejar quando agir.' : 'Quanto tempo você aguentaria sem renda antes que o estresse financeiro distorcesse tudo?'}`,
+      emocao_core: `${emotions.esgotamento ? esg_frag : `O que acontece no seu corpo quando você pensa em ir trabalhar amanhã? Esse sinal — não o raciocínio, o sinal físico — é anterior a qualquer argumento e geralmente mais honesto.`}`,
+      futuro_core: `${timeFrag ? timeFrag + ' ' : ''}Daqui a 5 anos, o que você vai querer ter feito com esse momento? Permanecer pode significar estabilidade ou estagnação. Sair pode significar crescimento ou fuga — dependendo do que vier depois.`,
+      sabedoria_core: `Quem já viveu isso diria: nunca saia de algo, vá sempre em direção a algo. ${dualFrag || 'A diferença entre fuga e movimento é crucial — e só você sabe qual dos dois está por trás da sua vontade de sair.'}`,
+      risco_core: `Os riscos de sair são visíveis. Os de ficar são silenciosos: deterioração lenta da autoestima, anos que não voltam, o efeito que insatisfação crônica tem na saúde e nos relacionamentos. ${people.conjuge||people.filhos ? peopleFrag : ''}`,
+      outros_core: `${peopleFrag || 'Quem depende de você é afetado.'} Mas permanecer num lugar que te esgota também afeta quem você ama — de formas que só aparecem com o tempo.`,
+    },
+    relacionamento: {
+      razao_core: `${timeFrag ? timeFrag + ' ' : ''}Observe padrões ao longo do tempo, não momentos isolados. Os conflitos se resolvem ou se repetem? ${dualFrag || 'Há crescimento mútuo, ou apenas tolerância mútua?'}`,
+      emocao_core: `O que você sente quando imagina um futuro sem essa pessoa? E o que sente quando imagina daqui a 5 anos exatamente igual ao presente? ${emotions.medo ? medo_frag : 'As duas perguntas revelam coisas diferentes sobre onde você realmente está.'}`,
+      futuro_core: `${people.filhos ? 'Seus filhos precisam de pais presentes, não necessariamente juntos. Um ambiente de conflito constante faz mais dano do que uma separação conduzida com respeito.' : 'Daqui a 10 anos, o relacionamento que você quer ter — se parece com o que você tem agora, ou com outra coisa?'}`,
+      sabedoria_core: `A dificuldade em si não é motivo para sair. A ausência de vontade de resolver é. ${dualFrag || 'O que distingue crises superáveis de situações insustentáveis é se há reciprocidade — os dois querem resolver, ou só um carrega?'}`,
+      risco_core: `${emotions.culpa ? culpa_frag + ' ' : ''}Os riscos de sair são emocionais e visíveis. Os riscos de ficar são progressivos e silenciosos. ${stakes.saude_mental ? stakeFrag : 'Nenhum dos dois caminhos é sem custo.'}`,
+      outros_core: `${peopleFrag || 'As pessoas ao redor são afetadas.'} ${resolFrag || 'Mas tratar sua própria vida como sacrifício pelos outros raramente produz o resultado que você imagina.'}`,
+    },
+    negocio: {
+      razao_core: `${quotes.length ? quoteFrag + ' ' : ''}A questão central não é se a ideia é boa — é se existe evidência de que alguém pagaria por ela. Você já testou com pessoas reais, fora do seu círculo próximo?`,
+      emocao_core: `${emotions.esperanca ? 'A esperança que aparece no que você escreveu é real — mas é combustível, não validação.' : ''} Empreender é emocionalmente brutal. Não basta acreditar no produto: você precisa conseguir tolerar meses de incerteza sem se destruir.`,
+      futuro_core: `${timeFrag ? timeFrag + ' ' : ''}Daqui a 10 anos, o arrependimento de não ter tentado é tão real quanto o de ter perdido dinheiro. ${dualFrag || 'Mas tentar não precisa ser tudo ou nada — começar pequeno testa a ideia sem destruir a segurança.'}`,
+      sabedoria_core: `Quem já passou por isso diria: os melhores negócios nascem de um problema real que o fundador quer resolver, não de insatisfação com a vida atual. ${emotions.esgotamento ? 'Insatisfação é uma péssima fundação.' : 'O que especificamente você quer resolver?'}`,
+      risco_core: `${stakes.financeiro ? stakeFrag + ' ' : ''}Quanto você pode perder sem que isso comprometa sua segurança básica? Esse número, quando calculado de verdade, geralmente reduz o medo pela metade.`,
+      outros_core: `${peopleFrag || 'Quem depende de você é afetado.'} Mas os melhores negócios existem porque melhoram a vida de alguém além do fundador — isso também é o que mantém o empreendedor de pé nos momentos difíceis.`,
+    },
+    mudanca: {
+      razao_core: `${timeFrag ? timeFrag + ' ' : ''}Mudança de lugar raramente resolve problemas internos — mas pode criar condições externas que antes eram impossíveis. O que especificamente você não consegue ter ou fazer onde está?`,
+      emocao_core: `Existe algo que te puxa para o novo lugar, ou algo que te empurra para fora do atual? ${dualFrag || 'Mudanças motivadas por atração são mais estáveis do que as motivadas por fuga — porque o que você foge costuma ir junto.'}`,
+      futuro_core: `${people.filhos ? peopleFrag + ' ' : ''}Daqui a 10 anos, lugares que hoje parecem estranhos se tornam normais. O que você quer ter construído lá — não o lugar em si, mas quem você se torna no processo?`,
+      sabedoria_core: `Quem já fez grandes mudanças diria: os primeiros seis meses são sempre mais difíceis do que o imaginado. O que o prepara para isso não é entusiasmo, é clareza sobre por quê você está indo.`,
+      risco_core: `${people.pais || people.amigos ? peopleFrag + ' ' : ''}O risco que ninguém avisa é o isolamento dos primeiros anos. Você tem um plano concreto para construir conexões no novo lugar, ou está contando com isso acontecer naturalmente?`,
+      outros_core: `${peopleFrag || 'Quem fica sente sua ausência.'} Mas ficar apenas para não deixar as pessoas que você ama é também uma forma de se perder. Elas precisam de você presente — não necessariamente no mesmo lugar.`,
+    },
+    geral: {
+      razao_core: `${dualFrag || 'Separe o que você sabe de fato do que está assumindo.'} ${timeFrag ? timeFrag + ' ' : ''}Quais informações concretas você ainda não tem — e que mudariam a perspectiva se tivesse?`,
+      emocao_core: `${medo_frag || esg_frag || `O que seu corpo sente quando você imagina cada caminho? Não o que a mente racionaliza — o que você sente fisicamente antes de começar a argumentar. Esse sinal é anterior a qualquer lógica.`}`,
+      futuro_core: `${resolFrag || `Daqui a 10 anos, o arrependimento de não ter agido é mais frequente e mais duradouro do que o de ter tentado. Qual versão de si mesmo você quer encontrar nesse espelho daqui a uma década?`}`,
+      sabedoria_core: `${quoteFrag ? quoteFrag + ' ' : ''}Uma pessoa que te conhece bem e já viveu algo parecido — você provavelmente já sabe o que ela diria. A pergunta é: por que você ainda não está fazendo isso?`,
+      risco_core: `${stakeFrag || 'Todo caminho tem risco — inclusive o de não decidir, que é também uma escolha.'} A diferença entre risco avaliado e medo disfarçado de cautela: o risco avaliado sabe exatamente o que pode acontecer.`,
+      outros_core: `${peopleFrag || 'As pessoas que te amam são mais resilientes do que o medo faz crer.'} ${culpa_frag || 'Permanecer numa situação que te esgota também os afeta — de formas silenciosas que só aparecem com o tempo.'}`,
+    },
+  };
+
+  const c = cores[mainTheme] || cores.geral;
+
+  // ── Assemble with personal detail injections ──────────────────────
+  const razao     = [c.razao_core,     stakeFrag&&mainTheme!=='emprego'&&mainTheme!=='negocio' ? stakeFrag:''].filter(Boolean).join(' ');
+  const emocao    = [c.emocao_core,    raiva_frag||''].filter(Boolean).join(' ');
+  const futuro    = c.futuro_core;
+  const sabedoria = c.sabedoria_core;
+  const risco     = c.risco_core;
+  const outros    = c.outros_core;
+
+  // ── Synthesis — always references what was written ────────────────
+  const emotionCount = Object.values(emotions).filter(Boolean).length;
+  const dominantEmotion = emotions.esgotamento ? 'esgotamento'
+    : emotions.medo ? 'medo'
+    : emotions.culpa ? 'culpa'
+    : emotions.duvida ? 'dúvida'
+    : emotions.raiva ? 'raiva'
+    : 'incerteza';
+
+  const sintese = appearsResolved
+    ? `Há sinais no que você escreveu de que uma parte de você já sabe o caminho. ${emotionCount > 2 ? `O que fica no caminho é o peso emocional — ${dominantEmotion} especificamente — e não a falta de clareza sobre o que fazer.` : 'O que falta não é mais análise. É a coragem de agir no que você já sabe.'}`
+    : hasBothSides
+    ? `Você apresenta os dois lados com honestidade — o que sugere que o problema não é falta de clareza, mas dificuldade de agir no que já é claro. ${stakes.financeiro || stakes.saude_mental ? 'Os riscos que você mencionou são reais e merecem planejamento — mas não são razão para não decidir.' : 'O que está impedindo que você aja no que já sabe?'}`
+    : `Essa decisão carrega ${emotionCount > 2 ? 'mais camadas emocionais do que parece à primeira vista' : 'um peso que você já carrega há algum tempo'}. ${isLong ? 'O fato de você ter escrito tanto revela que precisa ser ouvido — não apenas analisado.' : ''} O trabalho não é encontrar a resposta certa. É ter honestidade suficiente para agir na resposta que você já tem.`;
+
+  // ── Question — unique per text ────────────────────────────────────
+  const pergunta = appearsResolved
+    ? `Se você já sabe o que quer fazer, o que especificamente precisa acontecer para você se sentir autorizado a agir?`
+    : emotions.culpa
+    ? `Você está hesitando por responsabilidade genuína com os outros — ou por medo de ser visto como egoísta?`
+    : emotions.esgotamento
+    ? `Quanto do que você está sentindo é sobre a decisão em si, e quanto é sobre o estado de exaustão em que você chegou até ela?`
+    : hasBothSides
+    ? `Se você soubesse que a pessoa que mais respeita ia aprovar qualquer caminho que você escolhesse — o que você decidiria?`
+    : stakes.financeiro
+    ? `Se a questão financeira estivesse resolvida por um ano, você já saberia o que fazer — o que isso revela?`
+    : people.conjuge || people.filhos
+    ? `Você está decidindo o que quer para a sua vida, ou o que acredita que os outros precisam que você decida?`
+    : emotions.medo
+    ? `Esse medo está te protegendo de algo real, ou te impedindo de algo necessário — e você sabe distinguir os dois?`
+    : mainTheme === 'emprego'
+    ? `Se não houvesse risco financeiro, você já teria decidido — e o que isso diz sobre onde a resposta realmente está?`
+    : mainTheme === 'relacionamento'
+    ? `Você está lutando pelo relacionamento, ou lutando contra a solidão de sair dele?`
+    : mainTheme === 'negocio'
+    ? `Você quer ser empreendedor — ou quer que esse negócio específico exista no mundo? Você sabe a diferença?`
+    : `Se você soubesse que não ia decepcionar ninguém com nenhuma das escolhas — o que decidiria, e o que isso revela?`;
+
+  return { razao, emocao, futuro, sabedoria, risco, outros, sintese, pergunta };
+}
+
+// ─── CHAT ENGINE ─────────────────────────────────────────────────────────────
+function buildChatReply(userMsg, ctx, analysis, history) {
+  const u = userMsg.toLowerCase();
+  const { emotions, mainTheme, stakes, people, hasBothSides } = ctx;
+  const lastClaremsg = [...history].reverse().find(m=>m.role==='clare')?.text||'';
+
+  // detect what the user is doing
+  const isAgreeing    = /concordo|sim|exato|exatamente|é isso|é verdade|faz sentido|tocou|acertou/.test(u);
+  const isDisagreeing = /discordo|não|errado|errada|não é assim|não é isso|não acho|não concordo/.test(u);
+  const isDeflecting  = /não sei|nao sei|talvez|quem sabe|difícil dizer|difícil saber/.test(u);
+  const mentionsFear  = /medo|receio|assustado|assustada|temo/.test(u);
+  const mentionsMoney = /dinheiro|financeiro|salário|renda|grana/.test(u);
+  const mentionsPeople= /família|familia|filho|filha|parceiro|parceira|namorad|esposo|esposa|pais/.test(u);
+  const askingForAdvice=/o que você acha|me diz|me diz o que|o que fazer|me aconselha|sua opinião/.test(u);
+  const isShort       = userMsg.trim().split(/\s+/).length < 8;
+
+  // ── Response construction ──────────────────────────────────────
+  if(askingForAdvice){
+    return `CLARÊ não decide. Mas posso dizer o que vejo: ${hasBothSides ? 'você já apresentou os dois lados com clareza suficiente para decidir. O que falta não é mais informação.' : 'há mais clareza no que você escreveu do que você parece reconhecer.'} O que impede que você aja no que já sabe?`;
+  }
+
+  if(isAgreeing){
+    // push deeper, don't just validate
+    const pushes = [
+      `Se isso ressoa, já era sabido antes de chegar aqui. O que é diferente agora?`,
+      `Quando algo faz sentido assim, geralmente significa que a resposta já existia. O que falta para agir nela?`,
+      `Concordar é fácil. Agir no que se concorda é outra coisa. O que especificamente muda a partir de agora?`,
+    ];
+    return pick(pushes);
+  }
+
+  if(isDisagreeing){
+    const rebuttals = [
+      `Importante. O que o espelho não viu sobre a sua situação? Quanto mais você detalhar, mais posso ajustar.`,
+      `Discordâncias são as partes mais valiosas de uma conversa. O que está errado — o diagnóstico, ou a forma como foi dito?`,
+      `Ótimo. Então qual é a parte que não se aplica — e o que a substitui no seu caso específico?`,
+    ];
+    return pick(rebuttals);
+  }
+
+  if(isDeflecting){
+    const deflect = [
+      `"Não sei" às vezes é genuíno. Mas frequentemente é a resposta que damos quando sabemos e não queremos saber ainda. Se você tivesse que chutar — qual seria a resposta?`,
+      `Quando a resposta é realmente desconhecida, o corpo geralmente já tem uma versão dela. O que você sente quando imagina cada caminho — antes de começar a pensar?`,
+    ];
+    return pick(deflect);
+  }
+
+  if(mentionsFear){
+    return `Medo não é o problema — é informação sobre o que importa. ${emotions.medo ? 'Você já identificou isso antes.' : ''} O que especificamente você teme que aconteça — consegue colocar em uma frase?`;
+  }
+
+  if(mentionsMoney){
+    return `O lado financeiro é real e merece atenção concreta. ${stakes.financeiro ? 'Você já mencionou isso.' : ''} Mas dinheiro raramente é o bloqueio real — costuma ser a cobertura mais socialmente aceitável para outros medos. O que haveria por baixo, se o dinheiro não fosse o problema?`;
+  }
+
+  if(mentionsPeople){
+    return `As pessoas que você mencionou importam — isso é claro. Mas há uma diferença entre considerar o impacto nos outros e usar os outros como razão para não decidir. ${people.conjuge||people.filhos ? 'Você sabe distinguir esses dois casos no que está sentindo?' : 'Como você distingue os dois no que está sentindo?'}`;
+  }
+
+  if(isShort){
+    // short messages — ask to expand
+    const expand = [
+      `Pode desenvolver isso um pouco mais? Quero entender o que está por trás dessa resposta.`,
+      `Isso abre uma porta. O que há por trás disso?`,
+      `E o que você faz com isso?`,
+    ];
+    return pick(expand);
+  }
+
+  // ── Contextual fallbacks based on theme ──────────────────────────
+  const themeFallbacks = {
+    emprego:[
+      `Há uma distinção importante: você está fugindo de algo, ou indo em direção a algo? Só você sabe qual dos dois está acontecendo aqui.`,
+      `O que aconteceria se você ficasse mais seis meses — seria diferente do que os últimos seis?`,
+      `Qual é a versão de você que esse trabalho está impedindo de existir?`,
+    ],
+    relacionamento:[
+      `Há uma diferença entre amor que acabou e amor que está exausto. Você sabe qual dos dois está descrevendo?`,
+      `O que você perderia — não a pessoa, mas especificamente o quê — se você saísse?`,
+      `Se o relacionamento pudesse ser exatamente como você quer, como seria — e o que está mais distante disso hoje?`,
+    ],
+    negocio:[
+      `Você disse "quero abrir um negócio". O que especificamente você quer resolver no mundo com ele?`,
+      `Qual é a versão pequena dessa ideia — a que você poderia testar em 30 dias sem abandonar tudo?`,
+      `Quando você imagina que o negócio deu errado, o que exatamente aconteceu?`,
+    ],
+    geral:[
+      `Qual das seis perspectivas foi mais difícil de ler — e por quê?`,
+      `Se você tivesse que dar uma resposta agora, sem mais tempo para pensar, o que diria? E o que essa resposta instintiva revela?`,
+      `O que você precisaria saber ou ter para se sentir pronto para decidir — e o que isso diz sobre o que realmente está impedindo?`,
+    ],
+  };
+
+  const pool = themeFallbacks[mainTheme] || themeFallbacks.geral;
+  // avoid repeating last CLARÊ message context
+  return pick(pool);
+}
+
+// ─── SCREEN SWITCHING ─────────────────────────────────────────────────────────
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
 }
 
-// ── SCREEN 1 ─────────────────────────────────────────────────────────────
-const entryTa = document.getElementById('entryTa');
+// ─── SCREEN 1 ─────────────────────────────────────────────────────────────────
+const entryTa  = document.getElementById('entryTa');
 const entryBtn = document.getElementById('entryBtn');
-const charCount = document.getElementById('charCount');
+const charCount= document.getElementById('charCount');
 
-// warm welcome messages — rotate based on time of day and history
 const WELCOMES = [
   'Não precisa ser articulado. Só honesto.',
   'O que você está carregando há mais tempo do que deveria?',
-  'Escreva como se ninguém fosse ler. Porque só CLARÊ vai.',
+  'Escreva como se ninguém fosse ler.',
   'Às vezes basta nomear a coisa para ela perder metade do peso.',
   'Tudo que você escrever aqui fica aqui.',
 ];
+
 function showWelcome(){
   const el = document.getElementById('entryWelcome');
   if(!el) return;
-  const hour = new Date().getHours();
   let msg;
   if(S.sessions.length > 0){
     const last = S.sessions[0];
-    const daysSince = Math.round((Date.now()-parseInt(last.id))/86400000);
-    if(daysSince < 2) msg = `Você voltou. O que mudou desde da última vez?`;
-    else if(daysSince < 7) msg = `Passaram ${daysSince} dias. Ainda carrega a mesma coisa?`;
-    else msg = WELCOMES[Math.floor(Math.random()*WELCOMES.length)];
+    const days = Math.round((Date.now()-parseInt(last.id))/86400000);
+    msg = days < 1  ? `Você voltou hoje. O que mudou?`
+        : days < 2  ? `Você voltou. O que mudou desde ontem?`
+        : days < 7  ? `Passaram ${days} dias. Ainda carrega a mesma coisa?`
+        : days < 30 ? `Faz ${days} dias. Algo se resolveu, ou chegou algo novo?`
+        : `Você voltou. CLARÊ lembra das suas decisões anteriores.`;
   } else {
-    msg = hour < 12 ? 'Bom dia. Qual é o peso desta manhã?'
-        : hour < 18 ? 'Que bom que você veio. O que está pesando?'
-        : 'Noite boa para clareza. O que você precisa resolver?';
+    const h = new Date().getHours();
+    msg = h < 12 ? 'Bom dia. Qual é o peso desta manhã?'
+        : h < 18 ? pick(WELCOMES)
+        : 'Boa noite. O que você precisa resolver antes de dormir?';
   }
   el.textContent = msg;
-  setTimeout(()=>el.classList.add('on'), 300);
+  setTimeout(()=>el.classList.add('on'), 400);
 }
 
 entryTa.addEventListener('input', ()=>{
@@ -637,378 +631,229 @@ entryBtn.addEventListener('click', ()=>{
   startAnalysis();
 });
 
-// history
+// ─── RENDER HISTORY ───────────────────────────────────────────────────────────
 function renderHistory(){
   const strip = document.getElementById('historyStrip');
   const list  = document.getElementById('histEntries');
   if(!S.sessions.length){ strip.style.display='none'; return; }
   strip.style.display='block';
-  list.innerHTML = '';
+  list.innerHTML='';
   S.sessions.slice(0,5).forEach(s=>{
-    const row = document.createElement('div');
+    const row=document.createElement('div');
     row.className='hist-entry';
-    row.innerHTML=`<span class="hist-date mono">${s.date}</span><span class="hist-text">${s.text}</span>`;
+    row.innerHTML=`<span class="hist-date">${s.date}</span><span class="hist-text">${s.text}</span>`;
     row.addEventListener('click',()=>loadSession(s));
     list.appendChild(row);
   });
 }
 
-// ── AI CALL ───────────────────────────────────────────────────────────────
-async function aiCall(prompt, maxTokens=1200){
-  const r = await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      model:'claude-sonnet-4-20250514',
-      max_tokens: maxTokens,
-      messages:[{role:'user',content:prompt}]
-    })
-  });
-  const d = await r.json();
-  return d.content.map(b=>b.text||'').join('');
-}
+// ─── ANALYSIS FLOW ────────────────────────────────────────────────────────────
+const LOAD_MSGS=['CLARÊ está lendo...','Pesando cada perspectiva...','Ouvindo o que os fatos dizem...','Procurando o que você ainda não viu...','Formulando a pergunta certa...'];
 
-// ── ANALYSIS ─────────────────────────────────────────────────────────────
-async function startAnalysis(){
+function startAnalysis(){
   show('sLoading');
-
   let mi=0;
-  const msgEl = document.getElementById('loadMsg');
-  const interval = setInterval(()=>{
+  const msgEl=document.getElementById('loadMsg');
+  const iv=setInterval(()=>{
     mi=(mi+1)%LOAD_MSGS.length;
     msgEl.style.opacity=0;
     setTimeout(()=>{msgEl.textContent=LOAD_MSGS[mi];msgEl.style.opacity=1;},200);
-  },1800);
+  },1600);
 
-  const currentTheme = detectTheme(S.text);
-  const relatedPast = S.sessions.filter(s=>detectTheme(s.text)===currentTheme && s.analysis);
-  const pastContext = relatedPast.length > 0
-    ? `\n\nContexto de sessões anteriores sobre o mesmo tema:\n${relatedPast.slice(0,2).map(s=>`- "${s.text.slice(0,120)}" (${s.date})`).join('\n')}\nUse isso para notar se há padrões ou se a situação evoluiu.`
-    : '';
-
-  const prompt = `Você é CLARÊ — uma ferramenta de clareza para decisões difíceis. Voz: direta, honesta, sem clichês de autoajuda, às vezes desconfortavelmente precisa. Você nunca é genérica. Você leu o que a pessoa escreveu e responde especificamente àquilo.
-
-A pessoa escreveu:
-"${S.text}"${pastContext}
-
-Extraia o contexto implícito (tema, urgência, medos, o que está em jogo) e analise através de 6 perspectivas. Cada perspectiva: 3-4 frases densas e específicas para ESTA situação. Use o que a pessoa escreveu — cite detalhes, perceba o que não foi dito explicitamente.${relatedPast.length > 0 ? ' Se relevante, note como a situação se compara às anteriores.' : ''}
-
-Depois: síntese de 2-3 frases e a pergunta mais importante (deve ser incômoda e precisa).
-
-Responda SOMENTE em JSON válido:
-{
-  "razao": "...",
-  "emocao": "...",
-  "futuro": "...",
-  "sabedoria": "...",
-  "risco": "...",
-  "outros": "...",
-  "sintese": "...",
-  "pergunta": "..."
-}`;
-
-  let analysis;
-  try {
-    const raw = await aiCall(prompt);
-    analysis = JSON.parse(raw.replace(/```json|```/g,'').trim());
-  } catch(e) {
-    analysis = buildFallback(S.text);
-  }
-
-  clearInterval(interval);
-  S.analysis = analysis;
-  S.chat = [];
-
-  buildRevealPanels(analysis);
-  show('sReveal');
-  saveSession();
-  renderHistory();
+  // slight delay to feel like it's actually working
+  setTimeout(()=>{
+    clearInterval(iv);
+    const ctx = analyzeText(S.text);
+    const analysis = buildAnalysis(ctx);
+    S.analysis = analysis;
+    S.chat = [];
+    S._ctx = ctx;
+    buildRevealPanels(analysis, ctx);
+    show('sReveal');
+    saveSession();
+    renderHistory();
+  }, 2200 + Math.random()*800);
 }
 
-// ── FALLBACK ──────────────────────────────────────────────────────────────
-function buildFallback(text){
-  const t = text.toLowerCase();
-  const isWork = /emprego|trabalho|demiss|empresa|carreira/.test(t);
-  const isRel  = /relacionamento|namoro|casamento|termin|parceiro/.test(t);
-  return {
-    razao: isWork
-      ? `Separe fatos de sentimentos: o que você objetivamente tem agora versus o que poderia ter? Quanto tempo você tem de reserva financeira? O problema é o lugar, ou algo que você carregaria para qualquer lugar?`
-      : isRel
-      ? `Observe padrões ao longo do tempo, não momentos isolados. Os conflitos se resolvem ou se repetem em ciclos? Há crescimento mútuo, ou apenas tolerância?`
-      : `Separe o que você sabe de fato do que está assumindo. A maioria das decisões parece impossível porque estamos decidindo com informação incompleta.`,
-    emocao: `O que o seu corpo faz quando você imagina cada caminho? Não o que a mente racionaliza — o que você sente fisicamente antes de começar a argumentar. Esse sinal é anterior a qualquer lógica.`,
-    futuro: `Daqui a 10 anos, essa decisão provavelmente não parecerá tão definitiva quanto parece agora. O arrependimento de não ter agido é estatisticamente mais frequente e mais duradouro do que o de ter tentado.`,
-    sabedoria: `Uma pessoa que te conhece bem e já viveu algo parecido — você sabe o que ela diria. A sabedoria não resolve a decisão, mas enxerga o que a ansiedade esconde: que a maioria do que nos paralisa é menor do que parece.`,
-    risco: `Todo caminho tem risco — inclusive o de não decidir, que é também uma escolha. A diferença entre risco avaliado e medo disfarçado de cautela: o risco avaliado sabe exatamente o que pode acontecer.`,
-    outros: `As pessoas que te amam são mais resilientes do que o medo faz crer. Permanecer numa situação que te esgota também os afeta — de formas silenciosas que só aparecem com o tempo.`,
-    sintese: `Essa decisão não tem uma resposta objetivamente certa — tem uma resposta certa para quem você é e para o que você quer construir. O trabalho não é encontrar a resposta perfeita, mas ser honesto sobre qual caminho está alinhado com os seus valores reais.`,
-    pergunta: `Se você soubesse que não ia decepcionar ninguém com nenhuma das escolhas — o que você decidiria, e o que isso revela?`
-  };
-}
+// ─── BUILD PANELS ─────────────────────────────────────────────────────────────
+function buildRevealPanels(a, ctx){
+  const scroll=document.getElementById('revealScroll');
+  scroll.innerHTML='';
+  const total=LENSES.length+2;
 
-// ── BUILD REVEAL PANELS ───────────────────────────────────────────────────
-function buildRevealPanels(a){
-  const scroll = document.getElementById('revealScroll');
-  scroll.innerHTML = '';
-
-  const totalPanels = LENSES.length + 2; // lenses + synth + question
-
-  // update progress on scroll
-  const observer = new IntersectionObserver((entries)=>{
+  const obs=new IntersectionObserver((entries)=>{
     entries.forEach(entry=>{
       if(entry.isIntersecting){
         entry.target.classList.add('visible');
-        const idx = parseInt(entry.target.dataset.idx||0)+1;
-        document.getElementById('revealProgress').textContent =
-          idx < totalPanels ? `perspectiva ${idx} de ${totalPanels-1}` : 'síntese final';
-
-        // ritual silence on question panel
+        const idx=parseInt(entry.target.dataset.idx||0)+1;
+        document.getElementById('revealProgress').textContent=
+          idx<total?`perspectiva ${idx} de ${total-1}`:'síntese final';
+        // ritual silence
         if(entry.target.classList.contains('panel-question')){
-          const hint = entry.target.querySelector('#qHint');
-          const btn  = entry.target.querySelector('#qBtn');
-          if(hint && btn){
-            setTimeout(()=>{ hint.style.opacity='1'; }, 600);
-            setTimeout(()=>{
-              btn.style.opacity='1';
-              btn.style.pointerEvents='auto';
-              hint.style.opacity='0';
-            }, 4200);
+          const hint=entry.target.querySelector('.q-silence-hint');
+          const btn=entry.target.querySelector('.q-continue-btn');
+          if(hint&&btn){
+            setTimeout(()=>{hint.style.opacity='1';},600);
+            setTimeout(()=>{btn.style.opacity='1';btn.style.pointerEvents='auto';hint.style.opacity='0';},4200);
           }
         }
       }
     });
   },{threshold:0.3});
 
-  // lens panels
   LENSES.forEach((l,i)=>{
-    const panel = document.createElement('div');
-    panel.className='panel';
-    panel.dataset.l = l.key;
-    panel.dataset.idx = i;
-    panel.innerHTML = `
+    const p=document.createElement('div');
+    p.className='panel'; p.dataset.l=l.key; p.dataset.idx=i;
+    p.innerHTML=`
       <div class="panel-lens-tag">
         <div class="lens-color-line"></div>
-        <span class="lens-label-name mono">${l.name}</span>
-        <span class="panel-num mono">${i+1} / ${totalPanels-1}</span>
+        <span class="lens-label-name">${l.name}</span>
+        <span class="panel-num">${i+1} / ${total-1}</span>
       </div>
-      <h2 class="panel-title serif">${l.title}</h2>
+      <h2 class="panel-title">${l.title}</h2>
       <p class="panel-body">${a[l.key]||''}</p>
-      <button class="panel-next mono" onclick="scrollNextPanel(this)">próxima perspectiva</button>
-    `;
-    scroll.appendChild(panel);
-    observer.observe(panel);
+      <button class="panel-next" onclick="scrollNextPanel(this)">próxima perspectiva</button>`;
+    scroll.appendChild(p); obs.observe(p);
   });
 
-  // synthesis panel
-  const synthPanel = document.createElement('div');
-  synthPanel.className='panel panel-synth';
-  synthPanel.dataset.idx = LENSES.length;
-
-  // pattern insight
-  const patternHTML = buildPatternInsight();
-
-  synthPanel.innerHTML = `
-    <div class="label synth-label" style="margin-bottom:20px">Síntese · CLARÊ</div>
-    <p class="synth-text serif">${a.sintese||''}</p>
+  // synth
+  const sp=document.createElement('div');
+  sp.className='panel panel-synth'; sp.dataset.idx=LENSES.length;
+  const patternHTML=buildPatternInsight(ctx);
+  sp.innerHTML=`
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint);margin-bottom:20px">Síntese · CLARÊ</div>
+    <p class="synth-text">${a.sintese||''}</p>
     ${patternHTML}
-    <button class="panel-next mono" onclick="scrollNextPanel(this)">a pergunta final</button>
-  `;
-  scroll.appendChild(synthPanel);
-  observer.observe(synthPanel);
+    <button class="panel-next" onclick="scrollNextPanel(this)">a pergunta final</button>`;
+  scroll.appendChild(sp); obs.observe(sp);
 
-  // question panel — the ritual
-  const questionPanel = document.createElement('div');
-  questionPanel.className='panel panel-question';
-  questionPanel.dataset.idx = LENSES.length+1;
-
-  const qWords = (a.pergunta||'').split(' ');
-  const midPoint = Math.floor(qWords.length*0.6);
-  const qFormatted = qWords.slice(0,midPoint).join(' ')+'<br><span class="q-em">'+qWords.slice(midPoint).join(' ')+'</span>';
-
-  questionPanel.innerHTML = `
-    <p class="q-intro mono">A pergunta que você precisa responder</p>
+  // question — ritual
+  const qp=document.createElement('div');
+  qp.className='panel panel-question'; qp.dataset.idx=LENSES.length+1;
+  const qWords=(a.pergunta||'').split(' ');
+  const mid=Math.floor(qWords.length*0.6);
+  const qHTML=qWords.slice(0,mid).join(' ')+'<br><span class="q-em">'+qWords.slice(mid).join(' ')+'</span>';
+  qp.innerHTML=`
+    <p class="q-intro">A pergunta que você precisa responder</p>
     <div class="q-line"></div>
-    <p class="q-text serif">${qFormatted}</p>
-    <div id="qSilence" style="margin-top:56px;text-align:center">
-      <span class="q-silence-hint mono" id="qHint" style="font-size:8px;letter-spacing:.3em;color:var(--faint);opacity:0;transition:opacity .6s">fique com ela por um momento</span>
-      <button class="entry-btn" id="qBtn" onclick="openConversation()"
-        style="max-width:340px;margin:20px auto 0;display:flex;opacity:0;pointer-events:none;transition:opacity .8s ease">
-        <span class="serif" style="font-style:italic">Conversar com CLARÊ</span>
+    <p class="q-text">${qHTML}</p>
+    <div style="margin-top:56px;text-align:center">
+      <span class="q-silence-hint" style="font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.3em;color:var(--faint);opacity:0;transition:opacity .6s;display:block;margin-bottom:20px">fique com ela por um momento</span>
+      <button class="entry-btn q-continue-btn" onclick="openConversation()" style="max-width:340px;margin:0 auto;opacity:0;pointer-events:none;transition:opacity .8s ease">
+        <span style="font-family:'Lora',serif;font-style:italic">Conversar com CLARÊ</span>
         <span class="arr">→</span>
       </button>
-    </div>
-  `;
-  scroll.appendChild(questionPanel);
-  observer.observe(questionPanel);
+    </div>`;
+  scroll.appendChild(qp); obs.observe(qp);
 }
 
 function scrollNextPanel(btn){
-  const panel = btn.closest('.panel');
-  const next = panel.nextElementSibling;
+  const next=btn.closest('.panel').nextElementSibling;
   if(next) next.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function buildPatternInsight(){
+function buildPatternInsight(ctx){
   if(S.sessions.length < 2) return '';
-  const theme = detectTheme(S.text);
-  const sameCount = S.sessions.filter(s=>detectTheme(s.text)===theme).length;
-
-  let msg = '';
-  if(sameCount >= 2){
-    const labels = {emprego:'trabalho',relacionamento:'relacionamentos',negocio:'empreender',mudanca:'mudanças de vida',geral:'este tipo de decisão'};
-    msg = `◈ Padrão detectado — Esta é a ${sameCount+1}ª vez que você traz uma decisão sobre ${labels[theme]||theme} para CLARÊ. O que nessa área da vida ainda não foi resolvido de vez?`;
-  } else if(S.sessions.length >= 4){
-    msg = `◈ Você já trouxe ${S.sessions.length+1} decisões para CLARÊ. Olhando o conjunto, qual é o fio que conecta todas elas?`;
+  const theme=ctx.mainTheme;
+  const same=S.sessions.filter(s=>{ try{ return analyzeText(s.text).mainTheme===theme; }catch{return false;} }).length;
+  let msg='';
+  if(same>=2){
+    const labels={emprego:'trabalho',relacionamento:'relacionamentos',negocio:'empreender',mudanca:'mudanças de vida',geral:'este tipo de decisão'};
+    msg=`◈ Padrão — Esta é a ${same+1}ª vez que você traz uma decisão sobre ${labels[theme]||theme}. O que nessa área ainda não foi resolvido de vez?`;
+  } else if(S.sessions.length>=4){
+    msg=`◈ Você já trouxe ${S.sessions.length+1} decisões para CLARÊ. Qual é o fio que conecta todas elas?`;
   }
-
-  if(!msg) return '';
-  return `<div class="pattern-strip on" style="margin-top:24px"><p>${msg}</p></div>`;
+  return msg ? `<div class="pattern-strip on"><p>${msg}</p></div>` : '';
 }
 
-function detectTheme(t){
-  t = (t||'').toLowerCase();
-  if(/emprego|trabalho|demiss|empresa|carreira|chefe|sal[aá]rio/.test(t)) return 'emprego';
-  if(/relacionamento|namoro|casamento|termin|parceiro|namorad|divorc/.test(t)) return 'relacionamento';
-  if(/neg[oó]cio|empreend|startup|abrir|s[oó]cio/.test(t)) return 'negocio';
-  if(/mudar.*cidade|mudar.*pa[ií]s|morar|imigr|relocar/.test(t)) return 'mudanca';
-  return 'geral';
-}
-
-// ── CONVERSATION ─────────────────────────────────────────────────────────
+// ─── CONVERSATION ─────────────────────────────────────────────────────────────
 function openConversation(){
   show('sConversation');
-  const thread = document.getElementById('convThread');
-  thread.innerHTML = '';
+  document.getElementById('convThread').innerHTML='';
 
-  // cross-session memory: find relevant past sessions on same theme
-  const currentTheme = detectTheme(S.text);
-  const pastSessions = S.sessions.filter(s => s.id !== S.activeId && s.chat && s.chat.length > 1 && detectTheme(s.text) === currentTheme);
-  
+  const past=S.sessions.filter(s=>s.id!==S.activeId&&s.chat&&s.chat.length>1);
+  const samePast=past.filter(s=>{ try{ return analyzeText(s.text).mainTheme===S._ctx.mainTheme; }catch{return false;} });
+
   let opener;
-  if(pastSessions.length > 0){
-    const last = pastSessions[0];
-    // find last meaningful user message from that session
-    const lastUserMsg = [...last.chat].reverse().find(m=>m.role==='user');
-    const daysSince = Math.round((Date.now() - parseInt(last.id)) / 86400000);
-    const timeStr = daysSince === 0 ? 'hoje mais cedo' : daysSince === 1 ? 'ontem' : `há ${daysSince} dias`;
-    
-    opener = `${timeStr}, você trouxe algo parecido: <em>"${last.text.slice(0,80)}${last.text.length>80?'…':''}"</em>${lastUserMsg ? `<br><br>Naquela conversa, você disse: <em>"${lastUserMsg.text.slice(0,100)}${lastUserMsg.text.length>100?'…':''}"</em>` : ''}<br><br>Algo mudou desde então? Ou voltamos ao mesmo ponto?`;
+  if(samePast.length>0){
+    const prev=samePast[0];
+    const days=Math.round((Date.now()-parseInt(prev.id))/86400000);
+    const when=days<1?'hoje mais cedo':days<2?'ontem':`há ${days} dias`;
+    const lastUser=[...prev.chat].reverse().find(m=>m.role==='user');
+    opener=`${when}, você trouxe: <em>"${prev.text.slice(0,70)}${prev.text.length>70?'…':''}"</em>${lastUser?`<br><br>Naquela conversa você disse: <em>"${lastUser.text.slice(0,90)}${lastUser.text.length>90?'…':''}"</em>`:''}<br><br>Algo mudou desde então — ou voltamos ao mesmo ponto?`;
   } else {
-    opener = `Acabei de refletir sobre tudo que você escreveu. A pergunta que mais me ficou foi:<br><br><em>"${S.analysis.pergunta}"</em><br><br>O que isso levanta para você?`;
+    opener=`Acabei de refletir sobre o que você escreveu. A pergunta que mais me ficou foi:<br><br><em>"${S.analysis.pergunta}"</em><br><br>O que isso levanta para você?`;
   }
-
-  S.chat = [{role:'clare',text:opener}];
+  S.chat=[{role:'clare',text:opener}];
   addEntry('clare','CLARÊ',opener);
 }
 
-function addEntry(role, who, html){
-  const thread = document.getElementById('convThread');
-  const div = document.createElement('div');
+function addEntry(role,who,html){
+  const thread=document.getElementById('convThread');
+  const div=document.createElement('div');
   div.className=`conv-entry ${role}`;
-  div.innerHTML=`<div class="conv-who mono">${who}</div><div class="conv-text">${html}</div>`;
+  div.innerHTML=`<div class="conv-who">${who}</div><div class="conv-text">${html}</div>`;
   thread.appendChild(div);
-  thread.scrollTop = thread.scrollHeight;
-  return div;
+  thread.scrollTop=thread.scrollHeight;
 }
 
 function addTyping(){
-  const thread = document.getElementById('convThread');
-  const div = document.createElement('div');
-  div.className='conv-entry clare typing-entry';
-  div.id='typingEl';
-  div.innerHTML=`<div class="conv-who mono">CLARÊ</div><div class="conv-text"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>`;
-  thread.appendChild(div);
-  thread.scrollTop = thread.scrollHeight;
+  const thread=document.getElementById('convThread');
+  const div=document.createElement('div');
+  div.className='conv-entry clare typing-entry'; div.id='typingEl';
+  div.innerHTML=`<div class="conv-who">CLARÊ</div><div class="conv-text"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>`;
+  thread.appendChild(div); thread.scrollTop=thread.scrollHeight;
 }
 
-const convTa = document.getElementById('convTa');
-const sendBtn = document.getElementById('sendBtn');
-
+const convTa=document.getElementById('convTa');
+const sendBtn=document.getElementById('sendBtn');
 convTa.addEventListener('input',()=>{
-  sendBtn.disabled = !convTa.value.trim();
+  sendBtn.disabled=!convTa.value.trim();
   convTa.style.height='auto';
-  convTa.style.height = Math.min(convTa.scrollHeight,120)+'px';
+  convTa.style.height=Math.min(convTa.scrollHeight,120)+'px';
 });
-convTa.addEventListener('keydown', e=>{
+convTa.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(!sendBtn.disabled)doSend();}
 });
-sendBtn.addEventListener('click', doSend);
+sendBtn.addEventListener('click',doSend);
 
-async function doSend(){
-  const text = convTa.value.trim();
-  if(!text) return;
-  convTa.value=''; convTa.style.height='auto';
-  sendBtn.disabled=true;
-
+function doSend(){
+  const text=convTa.value.trim(); if(!text) return;
+  convTa.value=''; convTa.style.height='auto'; sendBtn.disabled=true;
   S.chat.push({role:'user',text});
   addEntry('user','Você',text);
   addTyping();
-
-  const histStr = S.chat.slice(-8).map(m=>`${m.role==='clare'?'CLARÊ':'Pessoa'}: ${m.text.replace(/<br>/g,' ').replace(/<[^>]+>/g,'')}`).join('\n');
-
-  const prompt = `Você é CLARÊ — uma ferramenta de clareza para decisões difíceis. Voz: direta, honesta, às vezes desconfortavelmente precisa. Nunca use clichês de autoajuda. Nunca repita o que já foi dito.
-
-Decisão original da pessoa: "${S.text}"
-Pergunta central que você fez: "${S.analysis.pergunta}"
-
-Conversa até agora:
-${histStr}
-
-A pessoa acabou de escrever: "${text}"
-
-Responda em 2-4 frases. Seja específico ao que ela disse. Se ela resistir, aprofunde com curiosidade. Se ela concordar, vá mais fundo. Nunca use listas. Às vezes a melhor resposta é uma pergunta. Responda apenas com o texto — sem formatação, sem prefixo.`;
-
-  let reply;
-  try {
-    reply = await aiCall(prompt, 300);
-  } catch(e) {
-    const fallbacks = [
-      `O que você está sentindo enquanto processa isso tudo? Às vezes o mais importante não está na resposta, mas em como o corpo reage à pergunta.`,
-      `Uma pergunta direta: se você tivesse que decidir agora, sem mais tempo para pensar — o que diria? E o que essa resposta instintiva te revela?`,
-      `Qual das seis perspectivas foi mais difícil de ler? Geralmente é essa que tem mais a ensinar.`,
-      `Há algo sobre a sua situação que você não escreveu — e que mudaria a análise se eu soubesse?`,
-    ];
-    reply = fallbacks[Math.floor(Math.random()*fallbacks.length)];
-  }
-
-  const typingEl = document.getElementById('typingEl');
-  if(typingEl) typingEl.remove();
-
-  S.chat.push({role:'clare',text:reply});
-  addEntry('clare','CLARÊ',reply);
-  updateSession();
-  sendBtn.disabled = !convTa.value.trim();
+  setTimeout(()=>{
+    const typingEl=document.getElementById('typingEl');
+    if(typingEl) typingEl.remove();
+    const reply=buildChatReply(text, S._ctx, S.analysis, S.chat);
+    S.chat.push({role:'clare',text:reply});
+    addEntry('clare','CLARÊ',reply);
+    updateSession();
+    sendBtn.disabled=!convTa.value.trim();
+  }, 700+Math.random()*600);
 }
 
-// ── SESSION MANAGEMENT ────────────────────────────────────────────────────
+// ─── SESSIONS ─────────────────────────────────────────────────────────────────
 function saveSession(){
-  const id = Date.now().toString();
-  S.activeId = id;
-  S.sessions.unshift({
-    id, text:S.text,
-    date:new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}),
-    analysis:S.analysis, chat:[]
-  });
+  const id=Date.now().toString(); S.activeId=id;
+  S.sessions.unshift({id,text:S.text,date:new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}),analysis:S.analysis,chat:[]});
   if(S.sessions.length>25) S.sessions=S.sessions.slice(0,25);
   persist();
 }
-function updateSession(){
-  const s = S.sessions.find(s=>s.id===S.activeId);
-  if(s){s.chat=S.chat;persist();}
-}
-function persist(){ localStorage.setItem('clare_v3',JSON.stringify(S.sessions)); }
-
+function updateSession(){ const s=S.sessions.find(s=>s.id===S.activeId); if(s){s.chat=S.chat;persist();} }
+function persist(){ localStorage.setItem('clare_v4',JSON.stringify(S.sessions)); }
 function loadSession(s){
   S.text=s.text; S.analysis=s.analysis; S.chat=s.chat||[]; S.activeId=s.id;
-  buildRevealPanels(s.analysis);
-  show('sReveal');
+  S._ctx=analyzeText(s.text);
+  buildRevealPanels(s.analysis,S._ctx); show('sReveal');
 }
 
-// ── EXPORT ────────────────────────────────────────────────────────────────
+// ─── EXPORT ───────────────────────────────────────────────────────────────────
 document.getElementById('exportBtn').addEventListener('click',()=>{
-  const a = S.analysis;
-  const chatStr = S.chat.map(m=>`${m.role==='clare'?'CLARÊ':'Você'}:\n${m.text.replace(/<br>/g,'\n').replace(/<[^>]+>/g,'')}`).join('\n\n');
-  const txt = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  const a=S.analysis;
+  const chatStr=S.chat.map(m=>`${m.role==='clare'?'CLARÊ':'Você'}:\n${m.text.replace(/<br>/g,'\n').replace(/<[^>]+>/g,'')}`).join('\n\n');
+  const txt=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CLARÊ — O espelho que fala de volta
 ${new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1019,39 +864,24 @@ ${new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'lo
 AS SEIS PERSPECTIVAS
 ───────────────────────────────
 
-RAZÃO — O que os fatos dizem
-${a.razao}
-
-EMOÇÃO — O que o corpo sente
-${a.emocao}
-
-FUTURO — Daqui a 10 anos
-${a.futuro}
-
-SABEDORIA — O que um sábio diria
-${a.sabedoria}
-
-RISCO — O que pode dar errado
-${a.risco}
-
-IMPACTO — Quem mais é afetado
-${a.outros}
-
+RAZÃO\n${a.razao}\n
+EMOÇÃO\n${a.emocao}\n
+FUTURO\n${a.futuro}\n
+SABEDORIA\n${a.sabedoria}\n
+RISCO\n${a.risco}\n
+IMPACTO\n${a.outros}\n
 ───────────────────────────────
 SÍNTESE
 ───────────────────────────────
 ${a.sintese}
 
-A PERGUNTA:
 ${a.pergunta}
 
 ───────────────────────────────
 CONVERSA
 ───────────────────────────────
 ${chatStr||'(ainda não iniciada)'}
-
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
-
   document.getElementById('modalPre').textContent=txt;
   document.getElementById('modalBg').classList.add('on');
   document.getElementById('copyBtn').onclick=()=>{
@@ -1061,15 +891,14 @@ ${chatStr||'(ainda não iniciada)'}
     });
   };
 });
-
 document.getElementById('newBtn').addEventListener('click',()=>{
   entryTa.value=''; charCount.textContent='0'; entryBtn.disabled=true;
   renderHistory(); show('sEntry');
 });
 function closeModal(){ document.getElementById('modalBg').classList.remove('on'); }
-document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+document.getElementById('modalBg').addEventListener('click',e=>{ if(e.target===e.currentTarget)closeModal(); });
 
-// ── INIT ──────────────────────────────────────────────────────────────────
+// ─── INIT ─────────────────────────────────────────────────────────────────────
 renderHistory();
 showWelcome();
 </script>
