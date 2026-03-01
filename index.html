@@ -3,266 +3,546 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Espelho de Decisões</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<title>CLARÊ — O espelho que fala de volta</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
 :root{
-  --bg:#0c0c0f;--surface:#13131a;--surface2:#1a1a24;
-  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.05);
-  --gold:#c9a96e;--gold-dim:rgba(201,169,110,0.12);
-  --text:#e8e3d9;--muted:#7a7068;--muted2:#4a4540;
-  --a1:#6e9fc9;--a2:#c96e6e;--a3:#6ec9a0;
-  --a4:#c9b56e;--a5:#a06ec9;--a6:#6ec9c9;
+  --ink:#0e0c0a;
+  --paper:#f5f0e8;
+  --cream:#ede7d9;
+  --warm:#d4c4a8;
+  --bronze:#8b6914;
+  --bronze-dim:rgba(139,105,20,0.12);
+  --bronze-mid:rgba(139,105,20,0.25);
+  --rust:#7a3b1e;
+  --sage:#3d5a47;
+  --dust:#9a8f82;
+  --dust2:#c4b9ac;
+  --void:#1a1612;
+  --text:#2a2520;
+  --muted:#6b6058;
+  --faint:#a8a098;
+
+  --a1:#2c4a6e; --a2:#6e2c2c; --a3:#2c5e3a;
+  --a4:#6e5a2c; --a5:#4a2c6e; --a6:#2c5e5e;
 }
-body{font-family:'Cormorant Garamond',Georgia,serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse 60% 50% at 15% 15%,rgba(201,169,110,0.05) 0%,transparent 60%),
-             radial-gradient(ellipse 40% 60% at 85% 80%,rgba(110,159,201,0.04) 0%,transparent 60%)}
+
+html{font-size:16px}
+body{
+  font-family:'Spectral',Georgia,serif;
+  background:var(--paper);
+  color:var(--text);
+  min-height:100vh;
+  cursor:default;
+  overflow-x:hidden;
+}
+
+/* grain overlay */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size:128px;
+}
+
+/* ── TYPOGRAPHY ── */
+.display{font-family:'Playfair Display',Georgia,serif}
+.mono{font-family:'JetBrains Mono',monospace}
 
 /* ── LAYOUT ── */
-.app{position:relative;z-index:1;display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
 
 /* ── SIDEBAR ── */
-.sidebar{border-right:1px solid var(--border);padding:32px 20px;display:flex;flex-direction:column;gap:24px;background:rgba(10,10,14,0.6);backdrop-filter:blur(8px);position:sticky;top:0;height:100vh;overflow-y:auto}
-.sidebar-logo{text-align:center;padding-bottom:20px;border-bottom:1px solid var(--border)}
-.sidebar-logo .s-eye{font-size:1.4rem;margin-bottom:6px;display:block}
-.sidebar-logo h2{font-size:1rem;font-weight:300;font-style:italic;color:var(--gold)}
-.sidebar-section-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.3em;color:var(--muted2);text-transform:uppercase;margin-bottom:10px}
-.new-btn{width:100%;padding:11px 16px;background:var(--gold-dim);border:1px solid rgba(201,169,110,0.25);border-radius:4px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:0.95rem;cursor:pointer;transition:all 0.3s}
-.new-btn:hover{background:rgba(201,169,110,0.22);border-color:rgba(201,169,110,0.5)}
-.history-list{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto}
-.history-item{padding:10px 12px;border-radius:4px;border:1px solid transparent;cursor:pointer;transition:all 0.2s}
-.history-item:hover{background:var(--surface);border-color:var(--border)}
-.history-item.active{background:var(--surface);border-color:rgba(201,169,110,0.2)}
-.history-item .h-date{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2);margin-bottom:3px;letter-spacing:0.1em}
-.history-item .h-text{font-size:0.85rem;color:var(--muted);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.history-item.active .h-text{color:var(--text)}
-.sidebar-empty{color:var(--muted2);font-size:0.85rem;font-style:italic;text-align:center;padding:20px 0}
+.sidebar{
+  background:var(--ink);
+  color:var(--paper);
+  display:flex;flex-direction:column;
+  padding:0;
+  position:sticky;top:0;height:100vh;overflow:hidden;
+}
+
+.sidebar-top{padding:32px 24px 24px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.brand{display:flex;flex-direction:column;gap:4px;margin-bottom:20px}
+.brand-name{
+  font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;
+  letter-spacing:-0.03em;color:var(--paper);line-height:1;
+}
+.brand-name span{color:var(--bronze);font-style:italic}
+.brand-tagline{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,0.25);text-transform:uppercase}
+
+.new-decision-btn{
+  width:100%;padding:11px 16px;
+  background:rgba(139,105,20,0.15);
+  border:1px solid rgba(139,105,20,0.3);
+  border-radius:3px;
+  color:var(--bronze);
+  font-family:'Spectral',serif;font-size:.9rem;
+  cursor:pointer;transition:all .25s;text-align:left;
+  display:flex;align-items:center;gap:8px;
+}
+.new-decision-btn:hover{background:rgba(139,105,20,0.25);border-color:rgba(139,105,20,0.5)}
+.new-decision-btn::before{content:'＋';font-size:.8rem}
+
+.sidebar-history{flex:1;overflow-y:auto;padding:20px 16px}
+.sidebar-history::-webkit-scrollbar{width:2px}
+.sidebar-history::-webkit-scrollbar-track{background:transparent}
+.sidebar-history::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+.hist-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.25em;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:12px;padding-left:4px}
+.hist-empty{font-family:'Spectral',serif;font-style:italic;font-size:.8rem;color:rgba(255,255,255,0.2);padding:12px 4px}
+.hist-item{padding:10px 12px;border-radius:3px;cursor:pointer;transition:all .2s;border:1px solid transparent;margin-bottom:4px}
+.hist-item:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.06)}
+.hist-item.active{background:rgba(139,105,20,0.12);border-color:rgba(139,105,20,0.2)}
+.hist-item-date{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(255,255,255,0.2);letter-spacing:.1em;margin-bottom:3px}
+.hist-item-text{font-size:.78rem;color:rgba(255,255,255,0.45);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hist-item.active .hist-item-text{color:rgba(255,255,255,0.7)}
+
+.sidebar-patterns{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06)}
+.patterns-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,0.2);text-transform:uppercase;margin-bottom:10px}
+.pattern-tag{display:inline-block;padding:4px 10px;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:.7rem;color:rgba(255,255,255,0.35);margin:2px 2px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.05em}
 
 /* ── MAIN ── */
-.main{display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+.main{display:flex;flex-direction:column;min-height:100vh;background:var(--paper)}
 
-/* ── VIEWS ── */
+/* VIEWS */
 .view{display:none;flex-direction:column;flex:1}
 .view.on{display:flex}
 
-/* HOME */
-.home-view{align-items:center;justify-content:center;padding:60px 40px}
-.home-center{max-width:620px;width:100%;text-align:center}
-.eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;opacity:.8}
-.home-center h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:300;letter-spacing:-0.02em;line-height:1.1;margin-bottom:16px}
-.home-center h1 em{font-style:italic;color:var(--gold)}
-.home-center p{color:var(--muted);font-size:1.05rem;font-weight:300;line-height:1.7;margin-bottom:40px}
-.input-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:10px;text-align:left}
-.decision-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:18px 22px;color:var(--text);font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:300;resize:none;outline:none;min-height:110px;transition:border-color 0.3s,box-shadow 0.3s;line-height:1.5}
-.decision-input::placeholder{color:var(--muted);opacity:.45}
-.decision-input:focus{border-color:rgba(201,169,110,0.4);box-shadow:0 0 0 3px rgba(201,169,110,0.06)}
-.next-btn{margin-top:16px;width:100%;padding:17px;background:transparent;border:1px solid var(--gold);border-radius:4px;color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:1.05rem;letter-spacing:.05em;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
-.next-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease}
-.next-btn:hover::before{transform:scaleX(1)}
-.next-btn:hover{color:var(--bg)}
-.next-btn span{position:relative;z-index:1}
-.next-btn:disabled{opacity:.35;cursor:not-allowed}
-.next-btn:disabled::before{display:none}
+/* ── HOME ── */
+.home-view{
+  align-items:center;justify-content:center;
+  padding:60px 48px;
+  position:relative;
+  overflow:hidden;
+}
 
-/* CONTEXT */
-.context-view{padding:48px 48px 80px;overflow-y:auto}
-.ctx-header{margin-bottom:40px}
-.ctx-header h2{font-size:1.8rem;font-weight:300;font-style:italic;color:var(--muted);margin-bottom:6px}
-.ctx-decision{font-size:1.3rem;font-style:italic}
-.ctx-sub{color:var(--muted);font-size:0.95rem;margin-top:10px;line-height:1.5}
-.ctx-questions{display:flex;flex-direction:column;gap:28px;max-width:600px}
-.ctx-q label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:10px}
-.ctx-q .q-text{font-size:1.1rem;margin-bottom:12px;line-height:1.4}
-.ctx-options{display:flex;flex-wrap:wrap;gap:8px}
-.ctx-opt{padding:8px 16px;border:1px solid var(--border);border-radius:20px;background:transparent;color:var(--muted);font-family:'Cormorant Garamond',serif;font-size:0.95rem;cursor:pointer;transition:all 0.2s}
-.ctx-opt:hover{border-color:rgba(201,169,110,0.3);color:var(--text)}
-.ctx-opt.sel{border-color:var(--gold);color:var(--gold);background:var(--gold-dim)}
-.ctx-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 18px;color:var(--text);font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:300;resize:none;outline:none;min-height:80px;transition:border-color 0.3s;line-height:1.5}
-.ctx-textarea::placeholder{color:var(--muted);opacity:.45}
-.ctx-textarea:focus{border-color:rgba(201,169,110,0.35)}
-.ctx-actions{margin-top:40px;display:flex;gap:12px}
-.back-btn{padding:14px 28px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--muted);font-family:'Cormorant Garamond',serif;font-size:0.95rem;cursor:pointer;transition:all 0.2s}
-.back-btn:hover{border-color:var(--muted);color:var(--text)}
+/* decorative lines */
+.home-view::before{
+  content:'';position:absolute;
+  top:0;right:0;width:40%;height:100%;
+  background:repeating-linear-gradient(
+    -60deg,
+    transparent,transparent 40px,
+    rgba(139,105,20,0.03) 40px,rgba(139,105,20,0.03) 41px
+  );
+  pointer-events:none;
+}
 
-/* LOADING */
-.loading-view{align-items:center;justify-content:center;gap:20px}
-.orb{width:52px;height:52px;border:1px solid rgba(201,169,110,0.25);border-top-color:var(--gold);border-radius:50%;animation:spin 1.2s linear infinite}
-.loading-view p{color:var(--muted);font-style:italic}
+.home-inner{max-width:560px;width:100%;position:relative;z-index:1}
 
-/* RESULTS */
-.results-view{overflow-y:auto;padding:48px 48px 80px}
-.results-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:48px;gap:16px;flex-wrap:wrap}
-.results-title h2{font-size:0.9rem;font-family:'DM Mono',monospace;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
-.results-title .r-decision{font-size:1.5rem;font-style:italic;max-width:500px;line-height:1.3}
-.export-btn{padding:10px 20px;border:1px solid var(--border);border-radius:4px;background:transparent;color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap}
-.export-btn:hover{border-color:var(--gold);color:var(--gold)}
+.home-kicker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--bronze);margin-bottom:24px;
+  display:flex;align-items:center;gap:10px;
+}
+.home-kicker::before{content:'';display:block;width:24px;height:1px;background:var(--bronze)}
 
-/* Context summary */
-.ctx-summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
-.ctx-tag{padding:5px 12px;border:1px solid var(--border);border-radius:12px;font-size:0.8rem;color:var(--muted);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em}
+.home-h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.4rem,5vw,3.8rem);
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-0.03em;
+  color:var(--ink);
+  margin-bottom:20px;
+}
+.home-h1 em{font-style:italic;color:var(--bronze);font-weight:400}
 
-.lenses-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:32px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:26px;position:relative;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s;animation:cardIn .5s ease both}
-.card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.card[data-l=razao]::before{background:var(--a1)}.card[data-l=razao]:hover{border-color:rgba(110,159,201,.3)}
-.card[data-l=emocao]::before{background:var(--a2)}.card[data-l=emocao]:hover{border-color:rgba(201,110,110,.3)}
-.card[data-l=futuro]::before{background:var(--a3)}.card[data-l=futuro]:hover{border-color:rgba(110,201,160,.3)}
-.card[data-l=sabedoria]::before{background:var(--a4)}.card[data-l=sabedoria]:hover{border-color:rgba(201,181,110,.3)}
-.card[data-l=risco]::before{background:var(--a5)}.card[data-l=risco]:hover{border-color:rgba(160,110,201,.3)}
-.card[data-l=outros]::before{background:var(--a6)}.card[data-l=outros]:hover{border-color:rgba(110,201,201,.3)}
-.card-icon{font-size:1.5rem;margin-bottom:10px;display:block}
-.card-name{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;margin-bottom:3px}
-.card[data-l=razao] .card-name{color:var(--a1)}.card[data-l=emocao] .card-name{color:var(--a2)}
-.card[data-l=futuro] .card-name{color:var(--a3)}.card[data-l=sabedoria] .card-name{color:var(--a4)}
-.card[data-l=risco] .card-name{color:var(--a5)}.card[data-l=outros] .card-name{color:var(--a6)}
-.card-title{font-size:1.1rem;font-weight:600;margin-bottom:12px}
-.card-body{color:var(--muted);font-size:.95rem;line-height:1.7;font-weight:300}
+.home-desc{
+  font-size:1.05rem;font-weight:300;
+  color:var(--muted);line-height:1.75;
+  margin-bottom:40px;
+  font-style:italic;
+}
 
-.verdict{background:var(--surface);border:1px solid rgba(201,169,110,.2);border-radius:6px;padding:36px;position:relative;overflow:hidden;margin-bottom:32px}
-.verdict::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.verdict-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:14px}
-.verdict-text{font-size:1.2rem;font-weight:300;line-height:1.7;margin-bottom:20px}
-.verdict-q{font-style:italic;color:var(--gold);font-size:1.1rem;line-height:1.6;padding-top:18px;border-top:1px solid var(--border)}
+.field-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--faint);display:block;margin-bottom:8px;
+}
+
+.decision-ta{
+  width:100%;
+  background:var(--cream);
+  border:1px solid var(--warm);
+  border-bottom:2px solid var(--bronze);
+  border-radius:3px 3px 0 0;
+  padding:18px 20px;
+  color:var(--text);
+  font-family:'Spectral',serif;font-size:1.15rem;font-weight:300;
+  resize:none;outline:none;min-height:110px;
+  transition:border-color .3s,box-shadow .3s;
+  line-height:1.55;
+}
+.decision-ta::placeholder{color:var(--faint);font-style:italic}
+.decision-ta:focus{border-bottom-color:var(--rust);box-shadow:0 4px 24px rgba(139,105,20,0.08)}
+
+.continue-btn{
+  width:100%;padding:16px 24px;
+  background:var(--ink);border:none;border-radius:0 0 3px 3px;
+  color:var(--paper);
+  font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;
+  cursor:pointer;transition:all .3s;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.continue-btn:hover{background:var(--void)}
+.continue-btn:disabled{opacity:.3;cursor:not-allowed}
+.continue-btn .arrow{transition:transform .3s}
+.continue-btn:hover .arrow{transform:translateX(4px)}
+
+/* ── CONTEXT ── */
+.context-view{padding:48px 56px 80px;overflow-y:auto;background:var(--paper)}
+.ctx-hd{margin-bottom:44px;border-bottom:1px solid var(--warm);padding-bottom:28px}
+.ctx-hd-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+.ctx-hd-decision{font-family:'Playfair Display',serif;font-size:1.5rem;font-style:italic;color:var(--ink);line-height:1.3}
+.ctx-hd-sub{margin-top:10px;font-size:.9rem;color:var(--muted);font-style:italic;line-height:1.5}
+
+.ctx-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;max-width:680px}
+.ctx-q-wrap{}
+.ctx-q-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:6px;display:block}
+.ctx-q-text{font-size:1rem;color:var(--text);margin-bottom:10px;line-height:1.4}
+.ctx-opts{display:flex;flex-wrap:wrap;gap:6px}
+.ctx-opt{
+  padding:7px 14px;
+  border:1px solid var(--warm);border-radius:2px;
+  background:transparent;color:var(--muted);
+  font-family:'Spectral',serif;font-size:.85rem;
+  cursor:pointer;transition:all .2s;
+}
+.ctx-opt:hover{border-color:var(--bronze);color:var(--text)}
+.ctx-opt.sel{border-color:var(--bronze);background:var(--bronze-dim);color:var(--bronze)}
+.ctx-extra{grid-column:1/-1}
+.ctx-extra-ta{
+  width:100%;background:var(--cream);border:1px solid var(--warm);
+  border-radius:3px;padding:14px 16px;color:var(--text);
+  font-family:'Spectral',serif;font-size:.95rem;font-weight:300;
+  resize:none;outline:none;min-height:72px;transition:border-color .25s;line-height:1.5;
+}
+.ctx-extra-ta::placeholder{color:var(--faint);font-style:italic}
+.ctx-extra-ta:focus{border-color:var(--bronze)}
+
+.ctx-actions{margin-top:36px;display:flex;gap:12px;max-width:680px}
+.ghost-btn{
+  padding:13px 24px;background:transparent;
+  border:1px solid var(--warm);border-radius:3px;
+  color:var(--muted);font-family:'Spectral',serif;font-size:.9rem;
+  cursor:pointer;transition:all .2s;
+}
+.ghost-btn:hover{border-color:var(--dust);color:var(--text)}
+.primary-btn{
+  flex:1;padding:14px 24px;background:var(--ink);border:none;border-radius:3px;
+  color:var(--paper);font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;
+  cursor:pointer;transition:background .25s;
+}
+.primary-btn:hover{background:var(--void)}
+
+/* ── LOADING ── */
+.loading-view{align-items:center;justify-content:center;gap:0;background:var(--paper)}
+.loading-inner{text-align:center}
+.loading-symbol{
+  font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;
+  color:var(--bronze);display:block;margin-bottom:24px;
+  animation:breathe 2s ease-in-out infinite;
+}
+.loading-lines{display:flex;flex-direction:column;gap:8px;align-items:center}
+.loading-line{
+  height:1px;background:var(--warm);
+  animation:expand 1.8s ease-in-out infinite;
+}
+.loading-line:nth-child(1){width:120px;animation-delay:0s}
+.loading-line:nth-child(2){width:80px;animation-delay:.2s}
+.loading-line:nth-child(3){width:100px;animation-delay:.4s}
+.loading-text{margin-top:28px;font-style:italic;color:var(--muted);font-size:.9rem}
+
+/* ── RESULTS ── */
+.results-view{overflow-y:auto;background:var(--paper)}
+
+.results-header{
+  padding:48px 56px 36px;
+  border-bottom:1px solid var(--warm);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:24px;
+  flex-wrap:wrap;
+}
+.results-title-group{}
+.results-kicker{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+.results-decision{font-family:'Playfair Display',serif;font-size:1.7rem;font-style:italic;color:var(--ink);line-height:1.25;max-width:520px}
+
+.results-actions{display:flex;gap:8px;align-items:center;padding-top:4px}
+.icon-btn{
+  padding:9px 16px;border:1px solid var(--warm);border-radius:3px;
+  background:transparent;color:var(--muted);
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;
+  cursor:pointer;transition:all .2s;
+}
+.icon-btn:hover{border-color:var(--bronze);color:var(--bronze)}
+
+.ctx-tags{padding:16px 56px;border-bottom:1px solid rgba(var(--warm-rgb),0.5);display:flex;flex-wrap:wrap;gap:6px}
+.ctx-chip{
+  padding:4px 12px;border:1px solid var(--warm);border-radius:12px;
+  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;
+  color:var(--faint);text-transform:uppercase;
+}
+
+/* LENSES */
+.lenses-area{padding:40px 56px}
+.lenses-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint);margin-bottom:24px}
+.lenses-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--warm);border:1px solid var(--warm);border-radius:4px;overflow:hidden;margin-bottom:40px}
+.lens-cell{
+  background:var(--paper);padding:28px 24px;
+  transition:background .25s;
+  animation:cellFade .4s ease both;
+}
+.lens-cell:hover{background:var(--cream)}
+.lens-cell-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.lens-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.lens-cell[data-l=razao] .lens-dot{background:var(--a1)}
+.lens-cell[data-l=emocao] .lens-dot{background:var(--a2)}
+.lens-cell[data-l=futuro] .lens-dot{background:var(--a3)}
+.lens-cell[data-l=sabedoria] .lens-dot{background:var(--a4)}
+.lens-cell[data-l=risco] .lens-dot{background:var(--a5)}
+.lens-cell[data-l=outros] .lens-dot{background:var(--a6)}
+.lens-name{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase}
+.lens-cell[data-l=razao] .lens-name{color:var(--a1)}
+.lens-cell[data-l=emocao] .lens-name{color:var(--a2)}
+.lens-cell[data-l=futuro] .lens-name{color:var(--a3)}
+.lens-cell[data-l=sabedoria] .lens-name{color:var(--a4)}
+.lens-cell[data-l=risco] .lens-name{color:var(--a5)}
+.lens-cell[data-l=outros] .lens-name{color:var(--a6)}
+.lens-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--ink);margin-bottom:10px}
+.lens-body{font-size:.875rem;line-height:1.75;color:var(--muted);font-weight:300}
+
+.lens-cell:nth-child(1){animation-delay:.04s}
+.lens-cell:nth-child(2){animation-delay:.08s}
+.lens-cell:nth-child(3){animation-delay:.12s}
+.lens-cell:nth-child(4){animation-delay:.16s}
+.lens-cell:nth-child(5){animation-delay:.20s}
+.lens-cell:nth-child(6){animation-delay:.24s}
+
+/* VERDICT */
+.verdict-area{padding:0 56px 40px}
+.verdict-box{
+  background:var(--ink);color:var(--paper);
+  border-radius:4px;padding:40px 44px;
+  position:relative;overflow:hidden;
+}
+.verdict-box::before{
+  content:'CLARÊ';
+  position:absolute;top:-10px;right:24px;
+  font-family:'Playfair Display',serif;font-size:5rem;font-weight:900;
+  color:rgba(255,255,255,0.03);letter-spacing:-.05em;pointer-events:none;
+  line-height:1;
+}
+.verdict-kicker{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:16px}
+.verdict-text{font-size:1.1rem;font-weight:300;line-height:1.8;color:rgba(255,255,255,.85);margin-bottom:24px}
+.verdict-question{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1.25rem;color:var(--bronze);
+  padding-top:20px;border-top:1px solid rgba(255,255,255,.1);
+  line-height:1.5;
+}
+.verdict-question::before{content:'— '}
+
+/* INSIGHT BADGE */
+.insight-badge{
+  margin-top:16px;padding:12px 16px;
+  border:1px solid rgba(139,105,20,.3);border-radius:3px;
+  background:rgba(139,105,20,.08);
+  display:flex;gap:10px;align-items:flex-start;
+}
+.insight-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+.insight-text{font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.05em}
 
 /* CHAT */
-.chat-section{border:1px solid var(--border);border-radius:6px;overflow:hidden}
-.chat-header{padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;gap:10px}
-.chat-header-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);opacity:.7}
-.chat-header span{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
-.chat-messages{padding:20px 24px;display:flex;flex-direction:column;gap:16px;min-height:80px;max-height:400px;overflow-y:auto}
-.chat-msg{display:flex;gap:12px;animation:fadeUp .3s ease both}
-.chat-msg.user{flex-direction:row-reverse}
-.msg-avatar{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0;margin-top:2px}
-.chat-msg.mirror .msg-avatar{background:var(--gold-dim);border-color:rgba(201,169,110,.3);color:var(--gold)}
-.chat-msg.user .msg-avatar{background:var(--surface2);color:var(--muted)}
-.msg-bubble{max-width:80%;padding:12px 16px;border-radius:6px;font-size:.95rem;line-height:1.6}
-.chat-msg.mirror .msg-bubble{background:var(--surface2);border:1px solid var(--border);color:var(--text)}
-.chat-msg.user .msg-bubble{background:var(--gold-dim);border:1px solid rgba(201,169,110,.2);color:var(--text)}
-.chat-input-row{border-top:1px solid var(--border);padding:14px 16px;display:flex;gap:10px;background:var(--surface2)}
-.chat-input{flex:1;background:transparent;border:1px solid var(--border);border-radius:4px;padding:10px 14px;color:var(--text);font-family:'Cormorant Garamond',serif;font-size:1rem;outline:none;transition:border-color .2s}
-.chat-input::placeholder{color:var(--muted);opacity:.4}
-.chat-input:focus{border-color:rgba(201,169,110,.35)}
-.chat-send{padding:10px 18px;background:var(--gold-dim);border:1px solid rgba(201,169,110,.3);border-radius:4px;color:var(--gold);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;cursor:pointer;transition:all .2s;white-space:nowrap}
-.chat-send:hover{background:rgba(201,169,110,.22)}
+.chat-area{padding:0 56px 80px}
+.chat-box{border:1px solid var(--warm);border-radius:4px;overflow:hidden}
+.chat-head{
+  padding:14px 20px;background:var(--cream);border-bottom:1px solid var(--warm);
+  display:flex;align-items:center;gap:10px;
+}
+.chat-head-brand{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--ink)}
+.chat-head-brand em{font-style:italic;color:var(--bronze)}
+.chat-head-status{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.15em;color:var(--faint);text-transform:uppercase;margin-left:auto}
+.chat-msgs{padding:20px;display:flex;flex-direction:column;gap:14px;min-height:80px;max-height:380px;overflow-y:auto}
+.chat-msgs::-webkit-scrollbar{width:2px}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--warm);border-radius:2px}
+.msg{display:flex;gap:10px;animation:msgIn .3s ease both}
+.msg.user{flex-direction:row-reverse}
+.msg-av{
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:.75rem;font-weight:700;
+  flex-shrink:0;margin-top:2px;
+}
+.msg.clare .msg-av{background:var(--ink);color:var(--bronze)}
+.msg.user .msg-av{background:var(--cream);border:1px solid var(--warm);color:var(--muted)}
+.msg-bub{max-width:82%;padding:11px 16px;border-radius:3px;font-size:.9rem;line-height:1.65}
+.msg.clare .msg-bub{background:var(--cream);border:1px solid var(--warm);color:var(--text)}
+.msg.user .msg-bub{background:var(--bronze-dim);border:1px solid var(--bronze-mid);color:var(--text)}
+.typing-indicator .msg-bub{display:flex;gap:4px;align-items:center;padding:14px 16px}
+.typing-dot{width:5px;height:5px;border-radius:50%;background:var(--dust2);animation:typingPulse 1.2s ease-in-out infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
 
-/* EXPORT MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:24px}
-.modal-overlay.on{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:36px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto}
-.modal h3{font-size:1.4rem;font-weight:300;font-style:italic;margin-bottom:20px}
-.modal-content{white-space:pre-wrap;font-family:'DM Mono',monospace;font-size:11px;line-height:1.8;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:20px;max-height:300px;overflow-y:auto;margin-bottom:20px}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end}
-.modal-copy{padding:10px 24px;background:var(--gold-dim);border:1px solid rgba(201,169,110,.3);border-radius:4px;color:var(--gold);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;cursor:pointer;transition:all .2s}
-.modal-copy:hover{background:rgba(201,169,110,.22)}
-.modal-close{padding:10px 24px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;cursor:pointer;transition:all .2s}
-.modal-close:hover{border-color:var(--muted);color:var(--text)}
+.chat-foot{
+  border-top:1px solid var(--warm);padding:12px 14px;
+  display:flex;gap:8px;background:var(--cream);
+}
+.chat-in{
+  flex:1;background:var(--paper);border:1px solid var(--warm);border-radius:3px;
+  padding:9px 14px;color:var(--text);
+  font-family:'Spectral',serif;font-size:.95rem;outline:none;transition:border-color .2s;
+}
+.chat-in::placeholder{color:var(--faint);font-style:italic;font-size:.85rem}
+.chat-in:focus{border-color:var(--bronze)}
+.send-btn{
+  padding:9px 18px;background:var(--ink);border:none;border-radius:3px;
+  color:var(--paper);font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:.15em;cursor:pointer;transition:background .2s;
+}
+.send-btn:hover{background:var(--void)}
 
-/* ANIMATIONS */
-@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+/* ── EXPORT MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(14,12,10,.75);backdrop-filter:blur(3px);z-index:200;align-items:center;justify-content:center;padding:24px}
+.modal-bg.on{display:flex}
+.modal-box{background:var(--paper);border:1px solid var(--warm);border-radius:4px;max-width:580px;width:100%;max-height:80vh;overflow-y:auto;padding:40px}
+.modal-box h3{font-family:'Playfair Display',serif;font-size:1.4rem;font-style:italic;margin-bottom:20px}
+.modal-pre{font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.9;color:var(--muted);background:var(--cream);border:1px solid var(--warm);border-radius:3px;padding:20px;max-height:280px;overflow-y:auto;white-space:pre-wrap;margin-bottom:20px}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end}
+
+/* ── KEYFRAMES ── */
+@keyframes breathe{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+@keyframes expand{0%,100%{transform:scaleX(.3);opacity:.3}50%{transform:scaleX(1);opacity:1}}
+@keyframes cellFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes typingPulse{0%,80%,100%{opacity:.2}40%{opacity:1}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.card:nth-child(1){animation-delay:.04s}.card:nth-child(2){animation-delay:.08s}
-.card:nth-child(3){animation-delay:.12s}.card:nth-child(4){animation-delay:.16s}
-.card:nth-child(5){animation-delay:.20s}.card:nth-child(6){animation-delay:.24s}
 
-.home-view{animation:fadeIn .5s ease both}
-
-/* RESPONSIVE */
-@media(max-width:680px){
-  .app{grid-template-columns:1fr}
+/* ── RESPONSIVE ── */
+@media(max-width:720px){
+  .shell{grid-template-columns:1fr}
   .sidebar{display:none}
-  .results-view,.context-view{padding:32px 20px 60px}
-  .home-view{padding:40px 20px}
+  .lenses-grid{grid-template-columns:1fr}
+  .ctx-grid{grid-template-columns:1fr}
+  .results-header,.lenses-area,.verdict-area,.chat-area,.ctx-tags{padding-left:24px;padding-right:24px}
+  .context-view{padding:32px 24px 60px}
+  .home-view{padding:40px 24px}
 }
 </style>
 </head>
 <body>
-<div class="app">
+<div class="shell">
 
-  <!-- SIDEBAR -->
+  <!-- ── SIDEBAR ── -->
   <aside class="sidebar">
-    <div class="sidebar-logo">
-      <span class="s-eye">◎</span>
-      <h2>Espelho de Decisões</h2>
-    </div>
-    <div>
-      <button class="new-btn" id="newBtn">+ Nova decisão</button>
-    </div>
-    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:8px">
-      <div class="sidebar-section-title">Histórico</div>
-      <div class="history-list" id="historyList">
-        <div class="sidebar-empty" id="historyEmpty">Nenhuma decisão ainda</div>
+    <div class="sidebar-top">
+      <div class="brand">
+        <div class="brand-name">CLA<span>RÊ</span></div>
+        <div class="brand-tagline">O espelho que fala de volta</div>
       </div>
+      <button class="new-decision-btn" id="newBtn">Nova decisão</button>
+    </div>
+
+    <div class="sidebar-history">
+      <div class="hist-label">Decisões anteriores</div>
+      <div id="histList"><div class="hist-empty">Nenhuma ainda</div></div>
+    </div>
+
+    <div class="sidebar-patterns" id="patternsPanel" style="display:none">
+      <div class="patterns-label">Padrões detectados</div>
+      <div id="patternTags"></div>
     </div>
   </aside>
 
-  <!-- MAIN -->
+  <!-- ── MAIN ── -->
   <main class="main">
 
-    <!-- HOME VIEW -->
+    <!-- HOME -->
     <div class="view on home-view" id="viewHome">
-      <div class="home-center">
-        <div class="eyebrow">Ferramenta de clareza</div>
-        <h1>O <em>Espelho</em><br>de Decisões</h1>
-        <p>Toda decisão difícil tem seis faces. Esta ferramenta ilumina cada uma delas com base no seu contexto específico — e depois abre espaço para você continuar a conversa.</p>
-        <label class="input-label" for="decisionInput">Qual é a sua decisão?</label>
-        <textarea id="decisionInput" class="decision-input" rows="4"
-          placeholder="Devo pedir demissão? / Devo terminar esse relacionamento? / Devo abrir meu próprio negócio?"></textarea>
-        <button class="next-btn" id="btnNext"><span>Continuar →</span></button>
+      <div class="home-inner">
+        <div class="home-kicker">Ferramenta de clareza</div>
+        <h1 class="home-h1 display">Toda decisão<br>tem um <em>núcleo</em><br>que você já sabe.</h1>
+        <p class="home-desc">CLARÊ não decide por você. Ela revela o que você já sabe mas ainda não conseguiu ver — através de seis perspectivas e uma conversa honesta.</p>
+
+        <label class="field-label" for="decisionInput">Qual é a decisão que você carrega?</label>
+        <textarea id="decisionInput" class="decision-ta" rows="4"
+          placeholder="Descreva a situação com suas próprias palavras. Quanto mais honesto, mais preciso o espelho..."></textarea>
+        <button class="continue-btn" id="btnContinue" disabled>
+          <span class="display" style="font-style:italic">Continuar com CLARÊ</span>
+          <span class="arrow">→</span>
+        </button>
       </div>
     </div>
 
-    <!-- CONTEXT VIEW -->
+    <!-- CONTEXT -->
     <div class="view context-view" id="viewContext">
-      <div class="ctx-header">
-        <h2>Antes de refletir...</h2>
-        <div class="ctx-decision" id="ctxDecisionShow"></div>
-        <p class="ctx-sub">Algumas perguntas rápidas para tornar a análise pessoal para você.</p>
+      <div class="ctx-hd">
+        <div class="ctx-hd-label">Decisão em análise</div>
+        <div class="ctx-hd-decision" id="ctxShow"></div>
+        <p class="ctx-hd-sub">Antes de refletir, CLARÊ precisa conhecer um pouco mais do seu contexto.<br>Isso torna a análise genuinamente pessoal.</p>
       </div>
-      <div class="ctx-questions" id="ctxQuestions"></div>
+      <div class="ctx-grid" id="ctxGrid"></div>
       <div class="ctx-actions">
-        <button class="back-btn" onclick="goTo('home')">← Voltar</button>
-        <button class="next-btn" id="btnAnalyze" style="flex:1;margin:0"><span>Revelar as seis perspectivas →</span></button>
+        <button class="ghost-btn" onclick="goTo('home')">← Voltar</button>
+        <button class="primary-btn display" id="btnAnalyze" style="font-style:italic">Revelar as seis perspectivas →</button>
       </div>
     </div>
 
-    <!-- LOADING VIEW -->
+    <!-- LOADING -->
     <div class="view loading-view" id="viewLoading">
-      <div class="orb"></div>
-      <p>O espelho está refletindo...</p>
+      <div class="loading-inner">
+        <span class="loading-symbol display">◎</span>
+        <div class="loading-lines">
+          <div class="loading-line"></div>
+          <div class="loading-line"></div>
+          <div class="loading-line"></div>
+        </div>
+        <p class="loading-text" id="loadingText">CLARÊ está refletindo...</p>
+      </div>
     </div>
 
-    <!-- RESULTS VIEW -->
+    <!-- RESULTS -->
     <div class="view results-view" id="viewResults">
-      <div class="results-top">
-        <div class="results-title">
-          <h2>Decisão analisada</h2>
-          <div class="r-decision" id="rDecision"></div>
+      <div class="results-header">
+        <div class="results-title-group">
+          <div class="results-kicker">Análise completa · CLARÊ</div>
+          <div class="results-decision display" id="rDecision"></div>
         </div>
-        <button class="export-btn" id="exportBtn">↓ Exportar</button>
-      </div>
-      <div class="ctx-summary" id="ctxSummary"></div>
-      <div class="lenses-grid" id="lensesGrid"></div>
-      <div class="verdict">
-        <div class="verdict-label">Síntese do espelho</div>
-        <div class="verdict-text" id="verdictText"></div>
-        <div class="verdict-q" id="verdictQ"></div>
-      </div>
-      <!-- CHAT -->
-      <div class="chat-section">
-        <div class="chat-header">
-          <div class="chat-header-dot"></div>
-          <span>Continue a conversa com o espelho</span>
+        <div class="results-actions">
+          <button class="icon-btn" id="exportBtn">↓ Exportar</button>
         </div>
-        <div class="chat-messages" id="chatMessages"></div>
-        <div class="chat-input-row">
-          <input id="chatInput" class="chat-input" placeholder="O que isso levanta para você? Discorde, aprofunde, questione..." />
-          <button class="chat-send" id="chatSend">Enviar</button>
+      </div>
+
+      <div class="ctx-tags" id="ctxTags"></div>
+
+      <div class="lenses-area">
+        <div class="lenses-label">As seis perspectivas</div>
+        <div class="lenses-grid" id="lensesGrid"></div>
+      </div>
+
+      <div class="verdict-area">
+        <div class="verdict-box">
+          <div class="verdict-kicker">Síntese · CLARÊ</div>
+          <div class="verdict-text" id="verdictText"></div>
+          <div class="verdict-question" id="verdictQ"></div>
+          <div class="insight-badge" id="insightBadge" style="display:none">
+            <span class="insight-icon">◈</span>
+            <span class="insight-text" id="insightText"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-area">
+        <div class="chat-box">
+          <div class="chat-head">
+            <span class="chat-head-brand display"><em>CLARÊ</em></span>
+            <span class="chat-head-status">Conversa aberta</span>
+          </div>
+          <div class="chat-msgs" id="chatMsgs"></div>
+          <div class="chat-foot">
+            <input id="chatIn" class="chat-in" placeholder="Reaja, discorde, aprofunde. CLARÊ está ouvindo..." />
+            <button class="send-btn" id="sendBtn">ENVIAR</button>
+          </div>
         </div>
       </div>
     </div>
@@ -271,461 +551,535 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 </div>
 
 <!-- EXPORT MODAL -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <h3>Exportar sessão</h3>
-    <div class="modal-content" id="modalContent"></div>
-    <div class="modal-actions">
-      <button class="modal-close" onclick="closeModal()">Fechar</button>
-      <button class="modal-copy" id="modalCopyBtn">Copiar texto</button>
+<div class="modal-bg" id="modalBg">
+  <div class="modal-box">
+    <h3 class="display">Exportar sessão</h3>
+    <div class="modal-pre" id="modalPre"></div>
+    <div class="modal-btns">
+      <button class="ghost-btn" onclick="closeModal()">Fechar</button>
+      <button class="primary-btn display" id="copyBtn" style="font-style:italic;flex:unset;padding:13px 28px">Copiar</button>
     </div>
   </div>
 </div>
 
 <script>
-// ─── STATE ───────────────────────────────────────────────────────────────────
-let state = {
-  decision: '',
-  context: {},
-  currentResult: null,
+// ── STATE ──────────────────────────────────────────────────────────────────
+const S = {
+  decision:'', context:{},
+  sessions: JSON.parse(localStorage.getItem('clare_v2_sessions')||'[]'),
+  activeId: null,
   chatHistory: [],
-  sessions: JSON.parse(localStorage.getItem('espelho_sessions') || '[]'),
-  activeSessionId: null,
+  currentAnalysis: null,
 };
 
-// ─── META ────────────────────────────────────────────────────────────────────
 const LENS_META = [
-  {key:'razao',    icon:'◈', name:'Razão',    title:'O que os fatos dizem'},
-  {key:'emocao',   icon:'◉', name:'Emoção',   title:'O que o corpo sente'},
-  {key:'futuro',   icon:'◬', name:'Futuro',   title:'Daqui a 10 anos'},
-  {key:'sabedoria',icon:'◎', name:'Sabedoria',title:'O que um sábio diria'},
-  {key:'risco',    icon:'◧', name:'Risco',    title:'O que pode dar errado'},
-  {key:'outros',   icon:'◌', name:'Impacto',  title:'Quem mais é afetado'},
+  {key:'razao',    dot:'◈', name:'Razão',    title:'O que os fatos dizem'},
+  {key:'emocao',   dot:'◉', name:'Emoção',   title:'O que o corpo sente'},
+  {key:'futuro',   dot:'◬', name:'Futuro',   title:'Daqui a 10 anos'},
+  {key:'sabedoria',dot:'◎', name:'Sabedoria',title:'O que um sábio diria'},
+  {key:'risco',    dot:'◧', name:'Risco',    title:'O que pode dar errado'},
+  {key:'outros',   dot:'◌', name:'Impacto',  title:'Quem mais é afetado'},
 ];
 
-// ─── CONTEXT QUESTIONS per theme ─────────────────────────────────────────────
-const CTX_QUESTIONS = {
-  emprego:[
-    {id:'tempo',   label:'Há quanto tempo você está nesse emprego?',    type:'opts', opts:['< 1 ano','1–3 anos','3–7 anos','7+ anos']},
-    {id:'situacao',label:'O que melhor descreve a situação?',           type:'opts', opts:['Ambiente tóxico','Sem crescimento','Oportunidade nova','Esgotamento','Outra']},
-    {id:'reserva', label:'Sua segurança financeira hoje:',              type:'opts', opts:['Tenho reservas','Reservas parciais','Sem reservas']},
-    {id:'livre',   label:'Algo que queira acrescentar (opcional):',     type:'text', placeholder:'Ex: já tenho uma proposta, tenho filhos, etc.'},
-  ],
-  relacionamento:[
-    {id:'duracao', label:'Há quanto tempo estão juntos?',               type:'opts', opts:['< 1 ano','1–3 anos','3–7 anos','7+ anos']},
-    {id:'motivo',  label:'O que está levando você a questionar?',       type:'opts', opts:['Desgaste','Infidelidade','Distância','Falta de futuro','Outra']},
-    {id:'filhos',  label:'Há filhos envolvidos?',                       type:'opts', opts:['Não','Sim, menores','Sim, adultos']},
-    {id:'livre',   label:'Algo que queira acrescentar (opcional):',     type:'text', placeholder:'Ex: já tentamos terapia, moramos juntos, etc.'},
-  ],
-  negocio:[
-    {id:'estagio', label:'Em que estágio você está?',                   type:'opts', opts:['Só uma ideia','Validando','Já tenho clientes','Em operação']},
-    {id:'capital', label:'Situação de capital:',                        type:'opts', opts:['Sem capital','Capital próprio','Investidor em vista','Financiamento']},
-    {id:'risco',   label:'Qual é o seu maior medo?',                    type:'opts', opts:['Perder dinheiro','Não dar certo','Julgamento alheio','Tudo acima']},
-    {id:'livre',   label:'Algo que queira acrescentar (opcional):',     type:'text', placeholder:'Ex: tenho sócio, deixaria emprego, área de atuação, etc.'},
-  ],
-  mudanca:[
-    {id:'motivo',  label:'Motivação principal:',                        type:'opts', opts:['Trabalho/carreira','Qualidade de vida','Relacionamento','Busca de algo novo','Fuga de algo']},
-    {id:'destino', label:'O destino já está definido?',                 type:'opts', opts:['Sim, tenho certeza','Tenho opções em mente','Não, é abstrato ainda']},
-    {id:'vinculos',label:'Você deixa para trás:',                       type:'opts', opts:['Família próxima','Amigos próximos','Ambos','Ninguém próximo']},
-    {id:'livre',   label:'Algo que queira acrescentar (opcional):',     type:'text', placeholder:'Ex: tenho filhos, parceiro, emprego garantido lá, etc.'},
-  ],
-  geral:[
-    {id:'urgencia',label:'Urgência da decisão:',                        type:'opts', opts:['Preciso decidir logo','Tenho algumas semanas','Posso levar meses','Sem prazo']},
-    {id:'bloqueio',label:'O que mais te paralisa?',                     type:'opts', opts:['Medo de errar','Opinião dos outros','Incerteza do resultado','Falta de informação']},
-    {id:'tentou',  label:'Você já tentou decidir antes?',               type:'opts', opts:['Sim, várias vezes','Sim, uma vez','Não, é a primeira vez']},
-    {id:'livre',   label:'Contexto adicional (opcional):',              type:'text', placeholder:'Quanto mais detalhe, mais precisa será a análise...'},
-  ]
-};
-
-// ─── CONTENT DATABASE ────────────────────────────────────────────────────────
-function buildContent(theme, ctx) {
-  const c = ctx;
-  const DB = {
-    emprego:{
-      razao: `${c.tempo ? `Você está nesse trabalho há ${c.tempo.toLowerCase()}, o que ${c.tempo==='< 1 ano'?'significa que você ainda está na fase de adaptação — saídas antes de 1 ano pedem cautela extra':'é tempo suficiente para conhecer bem a realidade do lugar'}. ` : ''}Separe fatos de sentimentos: quanto você ganha agora, qual é a estabilidade do setor, quantos meses de reserva você tem${c.reserva?` (você indicou: ${c.reserva.toLowerCase()})`:''}? Demissões voluntárias sem emprego garantido levam em média 3 a 9 meses para se resolver. A lógica fria também pergunta: o problema é o trabalho, ou algo que você carregaria para qualquer trabalho?`,
-      emocao: `${c.situacao?`Você descreveu a situação como "${c.situacao.toLowerCase()}" — ` : ''}Preste atenção ao que acontece no seu corpo domingo à noite antes de uma segunda-feira. Esse sinal não mente. Mas distingua: o que sentes é esgotamento real e estrutural, ou ansiedade passageira que melhoraria com uma pausa? O desgaste acumulado distorce a percepção. Às vezes o corpo pede férias, não demissão. Outras vezes, já decidiu antes da mente.`,
-      futuro: `Daqui a 10 anos, essa decisão não parecerá tão definitiva quanto parece agora. ${c.reserva==='Sem reservas'?'Com segurança financeira limitada, o risco de sair sem um plano concreto é real — o futuro pede preparação, não impulsividade. ':''}O que importa é: qual versão da sua carreira e da sua vida você quer ter construído? Permanecer pode significar estabilidade ou estagnação; sair pode significar crescimento ou arrependimento — dependendo do que vier depois.`,
-      sabedoria: `Quem já viveu isso diria: nunca saia de algo, vá sempre em direção a algo. A diferença entre fuga e movimento é crucial. ${c.situacao==='Ambiente tóxico'?'Ambientes genuinamente tóxicos fazem dano real e progressivo — a sabedoria aqui não é aguenta mais, mas sai com plano. ':''}Um sábio também diria: não tome decisões permanentes em estados temporários de exaustão. Mas reconheceria que esperar demais também tem custo.`,
-      risco: `Os riscos de sair são visíveis: renda, plano de saúde, rotina, identidade. ${c.reserva?`Com ${c.reserva.toLowerCase()}, ${c.reserva==='Tenho reservas'?'você tem uma margem real de segurança para agir':'a janela de tempo para encontrar algo novo é mais estreita'}. `:''}Os riscos de ficar são menos óbvios: oportunidades perdidas, desgaste progressivo da autoestima, impacto silencioso na saúde. O maior risco é tomar a decisão errada pelo medo do risco.`,
-      outros: `Quem depende financeiramente de você é diretamente afetado. Mas considere também: você permanecendo num lugar que te esgota afeta todos ao redor de formas silenciosas. Pessoas cronicamente insatisfeitas no trabalho levam isso para casa, para os relacionamentos, para o corpo.`,
-      sintese: `Essa decisão vive na tensão entre segurança e significado. ${c.situacao?`O que você descreveu — "${c.situacao.toLowerCase()}" — não é trivial. `:''}O que resta descobrir é se as condições externas tornam essa mudança viável agora, ou se ela precisa ser preparada com cuidado antes de acontecer.`,
-      pergunta: `Se o medo de ficar sem renda não existisse, você já teria saído — ou ainda teria dúvidas sobre o que quer?`
-    },
-    relacionamento:{
-      razao: `${c.duracao?`Vocês estão juntos há ${c.duracao.toLowerCase()} — `:''}Observe padrões, não momentos isolados. Com que frequência surgem os conflitos? Eles se resolvem ou se repetem em ciclos? ${c.motivo?`O que você descreveu — "${c.motivo.toLowerCase()}" — tem padrões específicos que a razão consegue mapear. `:''}A razão não mede amor, mas mede se o relacionamento funciona na prática: respeito mútuo, colaboração, crescimento.`,
-      emocao: `${c.motivo==='Desgaste'?'Desgaste acumulado é diferente de amor que acabou — mas com o tempo, um pode se tornar o outro. ':''}O que você sente quando pensa num futuro sem essa pessoa? E o que sente quando imagina daqui a 5 anos exatamente igual ao presente? Ficar por medo de solidão e ficar por amor real podem parecer idênticos por fora — só você sente a diferença por dentro.`,
-      futuro: `${c.filhos && c.filhos!=='Não'?`Com filhos envolvidos, o futuro tem uma camada extra de complexidade — mas "ficar pelos filhos" num ambiente de conflito constante pode fazer mais dano do que uma separação saudável e bem conduzida. `:''}Daqui a 10 anos, você consegue visualizar essa pessoa ao seu lado — não como projeção ideal, mas como ela é hoje? Relacionamentos não melhoram com o tempo por si sós: melhoram com esforço intencional de ambos.`,
-      sabedoria: `Quem passou por isso diria: a dificuldade em si não é motivo para sair, mas a ausência de vontade de resolver é. ${c.motivo==='Infidelidade'?'Infidelidade carrega camadas que a sabedoria reconhece como complexas — não é só o ato, é o que ele revelou sobre o relacionamento. ':''}O que distingue crises superáveis de situações insustentáveis é se há reciprocidade: ambos querem resolver, ou apenas um carrega o peso?`,
-      risco: `Os riscos de sair são reais: solidão, reconstrução, luto. ${c.filhos && c.filhos!=='Não'?'A presença de filhos aumenta a complexidade logística e emocional de qualquer decisão — considere isso com honestidade. ':''}Os riscos de ficar também existem: perder anos em algo que não vai mudar, reprimir quem você é, o efeito que o desgaste tem em tudo ao redor.`,
-      outros: `${c.filhos && c.filhos!=='Não'?`Seus filhos são os mais impactados — e pesquisas mostram que o conflito constante no lar é mais prejudicial do que uma separação conduzida com respeito. `:''}Famílias, amigos comuns, redes compartilhadas — todos são afetados. Mas ficar para não magoar terceiros é tratar sua própria vida como sacrifício pelos outros.`,
-      sintese: `Essa decisão não é sobre certo e errado. É sobre compatibilidade real, crescimento mútuo e quanto de si mesmo você precisa preservar. O amor raramente é o problema; a questão é se o amor sozinho é suficiente para sustentar uma vida inteira.`,
-      pergunta: `Você está lutando pelo relacionamento — ou lutando contra a solidão de sair dele?`
-    },
-    negocio:{
-      razao: `${c.estagio?`Você está no estágio "${c.estagio.toLowerCase()}" — ${c.estagio==='Só uma ideia'?'o que significa que a validação ainda é o trabalho mais importante antes de qualquer decisão financeira':c.estagio==='Já tenho clientes'||c.estagio==='Em operação'?'o que é significativo: você já tem prova de tração real':'validar antes de comprometer recursos grandes é o próximo passo crítico'}. `:''}Os maiores erros de empreendedores não são de execução, são de premissa: assumir que existe mercado antes de testar. A razão pede: você já teve 10 conversas reais com potenciais clientes que confirmariam pagar pelo que você quer oferecer?`,
-      emocao: `Empreender é emocionalmente brutal. ${c.risco?`Seu maior medo, você disse, é "${c.risco.toLowerCase()}" — isso é um dado importante sobre o tipo de resiliência que você vai precisar. `:''}Não basta gostar da ideia: você precisa aguentar os meses em que nada funciona, a solidão de decidir, os questionamentos. A pergunta não é "você acredita no produto?" mas "você consegue tolerar incerteza prolongada sem se destruir?"`,
-      futuro: `${c.capital==='Sem capital'?'Com capital limitado, o futuro exige criatividade na execução — mas falta de capital nunca impediu negócios reais de nascerem pequenos e crescerem com consistência. ':''}Daqui a 10 anos, o arrependimento de não ter tentado é tão real quanto o de ter perdido dinheiro. Mas tentar não precisa ser tudo ou nada: começar pequeno e em paralelo testa a ideia sem destruir a segurança.`,
-      sabedoria: `Quem já passou por isso diria: o melhor momento de abrir um negócio é quando você tem um problema real para resolver, não quando está insatisfeito com a vida. Insatisfação é uma péssima fundação. Propósito claro e conhecimento do cliente são a fundação certa.`,
-      risco: `${c.capital?`Com "${c.capital.toLowerCase()}", `:''}quanto você pode perder? Quanto tempo consegue sobreviver sem receita? Os riscos menos visíveis são relacionais — amigos que viram sócios mudam relacionamentos — e psicológicos: identidade atrelada ao sucesso do negócio é frágil.`,
-      outros: `Quem depende de você financeiramente é afetado diretamente. Mas considere também: os melhores negócios existem porque melhoram a vida de alguém além do fundador — e esse propósito se torna o combustível que mantém o empreendedor de pé nos momentos difíceis.`,
-      sintese: `Empreender exige que você aposte em si mesmo de uma forma que poucos outros contextos exigem. A questão não é se a ideia é boa — é se você está pronto para o processo, não apenas para o resultado imaginado.`,
-      pergunta: `Você quer ser empreendedor — ou quer que esse negócio específico exista no mundo? Você sabe a diferença entre essas duas coisas?`
-    },
-    mudanca:{
-      razao: `${c.destino?`Você indicou que "${c.destino.toLowerCase()}" — ${c.destino==='Sim, tenho certeza'?'ter o destino claro é uma vantagem real: permite planejar com concretude':'destinos vagos tornam a avaliação lógica difícil, e um pouco mais de definição antes de decidir pode ajudar muito'}. `:''}Compare oportunidades concretas: custo de vida, mercado de trabalho, rede de contatos. Mudar de lugar raramente resolve problemas internos — mas pode criar condições externas que antes eram impossíveis.`,
-      emocao: `${c.motivo?`Você identificou "${c.motivo.toLowerCase()}" como motivação principal. ${c.motivo==='Fuga de algo'?'Mudanças motivadas por fuga tendem a ser menos estáveis — porque o que você foge costuma ir junto. ':'Motivação positiva cria uma fundação mais sólida para a adaptação. '}`:''}O que seu corpo sente quando imagina um dia difícil no novo lugar — ainda assim valeria a pena estar lá?`,
-      futuro: `${c.vinculos && c.vinculos!=='Ninguém próximo'?`Você vai deixar para trás ${c.vinculos.toLowerCase()} — esse luto é real e deve ser processado, não ignorado. `:''}Daqui a 10 anos, lugares que hoje parecem distantes se tornam familiares. O que dura é o que você construiu lá: relacionamentos, carreira, identidade. A pergunta não é sobre o lugar — é sobre quem você se torna no processo de reconstruir tudo do zero.`,
-      sabedoria: `Quem já fez grandes mudanças geográficas diria: os primeiros seis meses são sempre mais difíceis do que o imaginado, e os primeiros três anos revelam se foi a decisão certa. Raramente alguém que se move com intenção clara se arrepende permanentemente.`,
-      risco: `Os riscos mais visíveis são financeiros e logísticos. O risco que ninguém avisa é o isolamento emocional — os primeiros anos num lugar novo podem ser solitários de formas surpreendentes. ${c.vinculos && c.vinculos!=='Ninguém próximo'?'Especialmente quando se deixa rede de suporte próxima para trás.':''}`,
-      outros: `${c.vinculos && c.vinculos!=='Ninguém próximo'?`${c.vinculos} ficam — e a ausência é sentida dos dois lados, de formas que só o tempo revela. `:''}Mas ficar apenas para não deixar as pessoas que você ama é também uma forma de se perder.`,
-      sintese: `Mudanças geográficas raramente são apenas sobre o lugar — são sobre quem você quer ser e o que quer construir. A clareza sobre o "por quê" é o que determina se a mudança funciona ou se apenas transfere os mesmos problemas para um novo cenário.`,
-      pergunta: `Você está indo em direção a algo que não existe onde você está — ou tentando deixar algo para trás que vai junto?`
-    },
-    geral:{
-      razao: `${c.bloqueio==='Falta de informação'?'Você identificou falta de informação como seu principal bloqueio — o que é ótimo: significa que o caminho é buscar dados concretos antes de decidir. ':''}Separe o que você sabe de fato do que está assumindo. Liste as informações que tem e as que estão faltando. Muitas decisões parecem impossíveis porque estamos decidindo no escuro — com mais dados, o caminho costuma ficar mais claro.`,
-      emocao: `${c.bloqueio==='Medo de errar'?'Medo de errar é o bloqueio mais comum — e quase sempre está protegendo algo que vale a pena nomear: o quê exatamente você teme perder? ':''}O que seu corpo diz quando você imagina cada caminho? Não o que a mente racionaliza — o que você sente fisicamente nos primeiros segundos, antes de começar a argumentar.`,
-      futuro: `${c.tentou==='Sim, várias vezes'?'Você tentou decidir várias vezes sem conseguir — isso sugere que o bloqueio pode ser emocional, não informacional. ':''}Daqui a 10 anos, o arrependimento de não agir é estatisticamente mais frequente e duradouro do que o de ter tentado. Qual versão de si mesmo você quer encontrar no espelho daqui a uma década?`,
-      sabedoria: `${c.urgencia?`Com urgência "${c.urgencia.toLowerCase()}", `:''}Uma pessoa sábia que te conhece bem provavelmente já sabe o que você deveria fazer — e você provavelmente já sabe o que ela diria. A sabedoria enxerga o que a ansiedade esconde: que a maioria das coisas que nos paralisam são menores do que parecem.`,
-      risco: `${c.bloqueio==='Medo de errar'?'Nomear o pior cenário realista e perguntar se você consegue sobreviver a ele costuma reduzir o medo pela metade. ':''}Todo caminho tem risco — inclusive o de não decidir, que é também uma escolha. A diferença entre risco bem avaliado e medo disfarçado de cautela é que o risco bem avaliado sabe exatamente o que pode acontecer.`,
-      outros: `${c.bloqueio==='Opinião dos outros'?'Você identificou a opinião dos outros como bloqueio — o que significa que parte da sua hesitação pode ser sobre o julgamento alheio, não sobre a decisão em si. Isso merece atenção. ':''}As pessoas que te amam são mais resilientes do que o medo nos faz crer. Permanecer numa situação que te esgota também os afeta — só que de formas mais silenciosas.`,
-      sintese: `Decisões verdadeiramente difíceis raramente têm uma resposta objetivamente certa — têm uma resposta certa para quem você é e o que quer construir. O trabalho não é encontrar a resposta perfeita, mas ser honesto o suficiente para reconhecer qual caminho está alinhado com seus valores reais.`,
-      pergunta: `Se você soubesse que não ia decepcionar ninguém com nenhuma das escolhas, o que você decidiria — e o que isso te diz?`
-    }
-  };
-  return DB[theme] || DB.geral;
-}
-
-// ─── CHAT RESPONSES ──────────────────────────────────────────────────────────
-function generateChatReply(userMsg, decision, context, lensData) {
-  const u = userMsg.toLowerCase();
-  const contextStr = Object.entries(context).filter(([k,v])=>v&&k!=='livre').map(([k,v])=>`${k}: ${v}`).join(', ');
-
-  if(u.includes('concordo')||u.includes('sim')||u.includes('exatamente')||u.includes('é isso')) {
-    return `Quando algo ressoa assim, geralmente é porque já sabíamos em algum nível. O que essa confirmação muda na sua clareza sobre o próximo passo?`;
-  }
-  if(u.includes('discordo')||u.includes('não acho')||u.includes('errado')||u.includes('não é assim')) {
-    return `Obrigado por isso — discordâncias são as partes mais valiosas. O que o espelho não captou sobre a sua situação? Quanto mais você detalhar, mais posso ajustar a perspectiva.`;
-  }
-  if(u.includes('medo')||u.includes('assustado')||u.includes('ansioso')||u.includes('ansiedade')) {
-    return `Medo não é o problema — é informação. A pergunta é: esse medo está te protegendo de algo real, ou te impedindo de algo necessário? Consegue nomear especificamente o que te assusta?`;
-  }
-  if(u.includes('dinheiro')||u.includes('financeiro')||u.includes('grana')||u.includes('renda')) {
-    return `Segurança financeira é real e merece ser levada a sério. Mas às vezes usamos ela como substituta de outra conversa que ainda não tivemos. Qual seria o mínimo financeiro que te daria segurança suficiente para agir?`;
-  }
-  if(u.includes('família')||u.includes('filhos')||u.includes('pais')||u.includes('parceiro')) {
-    return `As pessoas que amamos costumam ser o nosso maior motivo — e também o nosso maior bloqueio. Você já conversou abertamente com elas sobre essa decisão? O que você imagina que elas diriam se soubessem de tudo?`;
-  }
-  if(u.includes('não sei')||u.includes('confuso')||u.includes('perdido')||u.includes('dúvida')) {
-    return `"Não sei" às vezes significa que as opções são igualmente boas. Mas mais frequentemente significa que sabemos, e não queremos saber ainda. O que aconteceria se você fingisse que já decidiu — em qual direção você foi?`;
-  }
-  if(u.includes('arrepend')||u.includes('erro')) {
-    return `Arrependimento tem duas formas: o de ter agido, e o de não ter agido. Pesquisas mostram que a segunda é mais duradoura e mais dolorosa. Qual dos dois você já experimentou em decisões anteriores — e qual foi mais fácil de superar?`;
-  }
-  if(u.includes('tempo')||u.includes('esperar')||u.includes('quando')||u.includes('prazo')) {
-    return `"Esperar o momento certo" é genuíno às vezes. Outras vezes é a forma mais elegante de não decidir. Como você distinguiria, no seu caso, entre preparação real e procrastinação?`;
-  }
-  if(u.includes('outro')||u.includes('pessoa')||u.includes('opinião')) {
-    return `Opiniões externas têm valor — mas o risco é que cada pessoa projeta a própria vida no seu dilema. Quem na sua vida viveu algo parecido o suficiente para que a opinião dele seja realmente relevante aqui?`;
-  }
-  // fallback contextual
-  const fallbacks = [
-    `O que você está sentindo enquanto processa isso tudo? Às vezes o mais importante não está na resposta, mas em como o corpo reage à pergunta.`,
-    `Tem algo nas seis perspectivas que você gostaria de aprofundar? Posso explorar qualquer uma delas com mais detalhe para o seu caso específico.`,
-    `Uma pergunta direta: se você tivesse que dar uma resposta agora, sem mais tempo para pensar — o que diria? E o que essa resposta instintiva te revela?`,
-    `Há algo sobre a sua situação que o espelho ainda não sabe — e que mudaria a análise se soubesse?`,
-    `Qual das seis perspectivas foi a mais difícil de ler? Geralmente é essa que tem mais a ensinar.`,
-  ];
-  return fallbacks[Math.floor(Math.random()*fallbacks.length)];
-}
-
-// ─── DETECT THEME ─────────────────────────────────────────────────────────────
-function detect(text) {
-  const t = text.toLowerCase();
-  if(/emprego|trabalho|demiss|cargo|empresa|salário|chefe|carreira|profiss/.test(t)) return 'emprego';
+// ── THEME DETECTION ────────────────────────────────────────────────────────
+function detect(t){
+  t = t.toLowerCase();
+  if(/emprego|trabalho|demiss|cargo|empresa|sal[aá]rio|chefe|carreira/.test(t)) return 'emprego';
   if(/relacionamento|namoro|casamento|divorc|termin|separar|parceiro|namorad/.test(t)) return 'relacionamento';
-  if(/negócio|empreend|startup|abrir.*negócio|investir|sócio/.test(t)) return 'negocio';
-  if(/mudar.*cidade|mudar.*país|morar|imigr|relocar|mudança de cidade/.test(t)) return 'mudanca';
+  if(/neg[oó]cio|empreend|startup|abrir.*neg|investir|s[oó]cio/.test(t)) return 'negocio';
+  if(/mudar.*cidade|mudar.*pa[ií]s|morar|imigr|relocar/.test(t)) return 'mudanca';
   return 'geral';
 }
 
-// ─── NAVIGATION ──────────────────────────────────────────────────────────────
-function goTo(view) {
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
-  document.getElementById('view'+view.charAt(0).toUpperCase()+view.slice(1)).classList.add('on');
+// ── CONTEXT QUESTIONS ──────────────────────────────────────────────────────
+const CTX = {
+  emprego:[
+    {id:'tempo',   text:'Há quanto tempo você está nesse emprego?',        type:'opts', opts:['< 1 ano','1–3 anos','3–7 anos','7+ anos']},
+    {id:'situa',   text:'O que melhor descreve a situação?',                type:'opts', opts:['Ambiente tóxico','Sem crescimento','Oportunidade nova','Esgotamento']},
+    {id:'reserva', text:'Sua segurança financeira hoje:',                   type:'opts', opts:['Tenho reservas','Reservas parciais','Sem reservas']},
+    {id:'livre',   text:'Contexto adicional (opcional):',                   type:'text', ph:'Proposta em vista, filhos, saúde, algo que importa...'},
+  ],
+  relacionamento:[
+    {id:'duracao', text:'Há quanto tempo estão juntos?',                    type:'opts', opts:['< 1 ano','1–3 anos','3–7 anos','7+ anos']},
+    {id:'motivo',  text:'O que está levando você a questionar?',            type:'opts', opts:['Desgaste','Infidelidade','Distância','Sem futuro']},
+    {id:'filhos',  text:'Há filhos envolvidos?',                            type:'opts', opts:['Não','Sim, menores','Sim, adultos']},
+    {id:'livre',   text:'Contexto adicional (opcional):',                   type:'text', ph:'Terapia tentada, moradia, família envolvida...'},
+  ],
+  negocio:[
+    {id:'estagio', text:'Em que estágio você está?',                        type:'opts', opts:['Só uma ideia','Validando','Já tenho clientes','Em operação']},
+    {id:'capital', text:'Situação de capital:',                             type:'opts', opts:['Sem capital','Capital próprio','Investidor','Financiamento']},
+    {id:'medo',    text:'Qual é o seu maior medo?',                         type:'opts', opts:['Perder dinheiro','Não dar certo','Julgamento','Tudo acima']},
+    {id:'livre',   text:'Contexto adicional (opcional):',                   type:'text', ph:'Sócio, deixaria emprego, área, equipe...'},
+  ],
+  mudanca:[
+    {id:'motivo',  text:'Motivação principal:',                             type:'opts', opts:['Trabalho/carreira','Qualidade de vida','Relacionamento','Fuga de algo']},
+    {id:'destino', text:'O destino está definido?',                         type:'opts', opts:['Sim, definido','Tenho opções','Ainda não']},
+    {id:'vinculos',text:'Você deixa para trás:',                            type:'opts', opts:['Família próxima','Amigos próximos','Ambos','Ninguém próximo']},
+    {id:'livre',   text:'Contexto adicional (opcional):',                   type:'text', ph:'Filhos, parceiro, emprego garantido, prazo...'},
+  ],
+  geral:[
+    {id:'urgencia',text:'Urgência da decisão:',                             type:'opts', opts:['Preciso decidir logo','Algumas semanas','Posso levar meses','Sem prazo']},
+    {id:'bloqueio',text:'O que mais te paralisa?',                          type:'opts', opts:['Medo de errar','Opinião dos outros','Incerteza','Falta de informação']},
+    {id:'tentou',  text:'Você já tentou decidir antes?',                    type:'opts', opts:['Sim, várias vezes','Sim, uma vez','Não, é a primeira vez']},
+    {id:'livre',   text:'Contexto adicional (opcional):',                   type:'text', ph:'Quanto mais detalhe, mais precisa a análise...'},
+  ]
+};
+
+// ── AI ANALYSIS via Anthropic API ─────────────────────────────────────────
+async function callClarence(prompt) {
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1000,
+      messages:[{role:'user', content: prompt}]
+    })
+  });
+  const data = await resp.json();
+  return data.content.map(b=>b.text||'').join('');
 }
 
-// ─── HOME ─────────────────────────────────────────────────────────────────────
-document.getElementById('btnNext').addEventListener('click', () => {
-  const val = document.getElementById('decisionInput').value.trim();
-  if(val.length < 8) {
-    const ta = document.getElementById('decisionInput');
-    ta.style.borderColor='rgba(201,110,110,0.5)';
-    setTimeout(()=>ta.style.borderColor='',1500);
-    return;
-  }
-  state.decision = val;
-  state.context = {};
-  loadContextQuestions(val);
+async function runAIAnalysis(decision, context, theme) {
+  const ctxStr = Object.entries(context).filter(([k,v])=>v&&k!=='livre').map(([k,v])=>`- ${k}: ${v}`).join('\n');
+  const extra = context.livre ? `\nContexto extra: ${context.livre}` : '';
+
+  const prompt = `Você é CLARÊ — uma ferramenta de clareza emocional e racional para decisões difíceis. Sua voz é direta, honesta, empática, sem jargões de autoajuda. Você nunca é genérica. Você fala para esta pessoa específica, sobre esta situação específica.
+
+A pessoa está considerando: "${decision}"
+Tema identificado: ${theme}
+Contexto dela:
+${ctxStr || '(sem contexto adicional)'}${extra}
+
+Analise esta decisão através de EXATAMENTE 6 perspectivas. Cada perspectiva deve ter 2-3 frases densas, específicas para ESTA situação, usando o contexto fornecido. Não use frases genéricas de autoajuda. Seja direto e às vezes desconfortável. A pessoa precisa de clareza, não de conforto.
+
+Depois escreva uma síntese de 2-3 frases e a pergunta mais importante que ela precisa responder.
+
+Responda APENAS em JSON válido, sem markdown:
+{
+  "razao": "...",
+  "emocao": "...",
+  "futuro": "...",
+  "sabedoria": "...",
+  "risco": "...",
+  "outros": "...",
+  "sintese": "...",
+  "pergunta": "..."
+}`;
+
+  const raw = await callClarence(prompt);
+  const clean = raw.replace(/```json|```/g,'').trim();
+  return JSON.parse(clean);
+}
+
+async function runAIChatReply(userMsg, decision, context, analysis, history) {
+  const histStr = history.slice(-6).map(m=>`${m.role==='clare'?'CLARÊ':'Pessoa'}: ${m.text}`).join('\n');
+  const ctxStr = Object.entries(context).filter(([k,v])=>v&&k!=='livre').map(([k,v])=>`${k}: ${v}`).join(', ');
+
+  const prompt = `Você é CLARÊ — uma ferramenta de clareza para decisões difíceis. Voz: direta, honesta, sem jargões de autoajuda, às vezes incômodamente certeira.
+
+Decisão em análise: "${decision}"
+Contexto: ${ctxStr||'não informado'}
+Pergunta central que você fez: "${analysis.pergunta}"
+
+Conversa até agora:
+${histStr}
+
+A pessoa acabou de dizer: "${userMsg}"
+
+Responda em 2-4 frases. Seja específico sobre o que ela disse. Não repita o que já foi dito. Se ela resistir, aprofunde com curiosidade, não com julgamento. Se ela concordar, vá mais fundo. Às vezes a resposta certa é uma pergunta. Nunca use listas. Responda apenas com o texto da resposta, sem mais nada.`;
+
+  return await callClarence(prompt);
+}
+
+// ── FALLBACK (offline) ─────────────────────────────────────────────────────
+function fallbackAnalysis(decision, context, theme) {
+  const c = context;
+  const bases = {
+    emprego:{
+      razao:`${c.tempo?`Você está nesse trabalho há ${c.tempo} — `:''}Separe fatos de sentimentos: estabilidade financeira, mercado, e alternativas reais. ${c.reserva?`Com "${c.reserva}", sua margem de manobra é ${c.reserva==='Tenho reservas'?'real':'limitada'}. `:''}O problema é o trabalho, ou algo que você carregaria para qualquer lugar?`,
+      emocao:`${c.situa?`"${c.situa}" é o que você descreveu. `:''}Domingo à noite antes de uma segunda-feira — o que seu corpo faz? Esse sinal é anterior a qualquer argumento. Distinguir esgotamento estrutural de uma fase ruim é o trabalho emocional mais importante aqui.`,
+      futuro:`Daqui a 10 anos, essa decisão não parecerá tão definitiva. ${c.reserva==='Sem reservas'?'Com segurança financeira limitada, sair sem plano concreto é arriscado — o futuro pede preparação. ':''}Qual versão da sua carreira você quer ter construído?`,
+      sabedoria:`Quem já viveu isso diria: nunca saia de algo, vá em direção a algo. ${c.situa==='Ambiente tóxico'?'Ambientes tóxicos causam dano real e cumulativo — a sabedoria aqui não é aguentar mais, é sair com plano. ':''}Não tome decisões permanentes em estados temporários de exaustão.`,
+      risco:`Os riscos visíveis de sair são conhecidos. Os invisíveis de ficar: deterioração da autoestima, impacto silencioso na saúde, anos que não voltam. ${c.reserva?`Com "${c.reserva}", sua janela real é `+(c.reserva==='Tenho reservas'?'confortável.':'estreita.'):''}`,
+      outros:`Quem depende de você é afetado. Mas você permanecendo num lugar que te esgota também os afeta — de formas silenciosas que só aparecem com o tempo.`,
+      sintese:`Essa decisão vive entre segurança e significado. ${c.situa?`O que você descreveu — "${c.situa}" — não é trivial. `:''}A questão não é ficar ou sair: é descobrir se as condições tornam essa mudança viável agora.`,
+      pergunta:`Se o medo de ficar sem renda não existisse, você já teria saído — ou ainda teria dúvidas sobre o que quer?`
+    },
+    geral:{
+      razao:`Separe o que você sabe de fato do que está assumindo. ${c.bloqueio==='Falta de informação'?'Você identificou isso como bloqueio — o próximo passo é buscar os dados que faltam antes de decidir. ':''}Muitas decisões parecem impossíveis porque estamos decidindo no escuro.`,
+      emocao:`${c.bloqueio==='Medo de errar'?'Medo de errar protege algo — o quê exatamente você teme perder? ':''}O que seu corpo diz nos primeiros segundos ao imaginar cada caminho, antes de a mente começar a argumentar?`,
+      futuro:`${c.tentou==='Sim, várias vezes'?'Você tentou decidir várias vezes sem conseguir — o bloqueio pode ser emocional, não informacional. ':''}Daqui a 10 anos, o arrependimento de não agir é mais frequente e duradouro do que o de ter tentado.`,
+      sabedoria:`${c.urgencia?`Com urgência "${c.urgencia}", `:''}Uma pessoa sábia que te conhece bem provavelmente já sabe o que você deveria fazer. E você provavelmente sabe o que ela diria.`,
+      risco:`${c.bloqueio==='Medo de errar'?'Nomear o pior cenário realista e perguntar se você sobrevive a ele reduz o medo pela metade. ':''}Todo caminho tem risco — inclusive o de não decidir, que é também uma escolha.`,
+      outros:`${c.bloqueio==='Opinião dos outros'?'Parte da sua hesitação pode ser sobre julgamento alheio, não sobre a decisão em si. Isso merece atenção. ':''}As pessoas que te amam são mais resilientes do que o medo faz crer.`,
+      sintese:`Decisões difíceis raramente têm resposta objetivamente certa — têm uma resposta certa para quem você é e o que quer construir.`,
+      pergunta:`Se você soubesse que não ia decepcionar ninguém com nenhuma das escolhas, o que decidiria — e o que isso te diz?`
+    }
+  };
+  return bases[theme] || bases.geral;
+}
+
+// ── PATTERN DETECTION ─────────────────────────────────────────────────────
+function detectPatterns(sessions) {
+  if(sessions.length < 2) return [];
+  const themes = sessions.map(s=>detect(s.decision));
+  const patterns = [];
+  const freq = {};
+  themes.forEach(t=>{freq[t]=(freq[t]||0)+1});
+  Object.entries(freq).forEach(([t,n])=>{
+    if(n>=2){
+      const labels = {emprego:'Trabalho recorrente',relacionamento:'Relações recorrentes',negocio:'Empreendedorismo',mudanca:'Mudanças de vida',geral:'Decisões diversas'};
+      patterns.push(labels[t]||t);
+    }
+  });
+  if(sessions.length>=3) patterns.push('Padrão de reflexão');
+  return patterns;
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────
+function goTo(id) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById('view'+id.charAt(0).toUpperCase()+id.slice(1)).classList.add('on');
+}
+
+// ── HOME ──────────────────────────────────────────────────────────────────
+const ta = document.getElementById('decisionInput');
+const btnC = document.getElementById('btnContinue');
+ta.addEventListener('input', ()=>{ btnC.disabled = ta.value.trim().length < 8; });
+ta.addEventListener('keydown', e=>{ if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)) btnC.click(); });
+
+btnC.addEventListener('click', ()=>{
+  const val = ta.value.trim();
+  if(val.length<8) return;
+  S.decision = val;
+  S.context = {};
+  buildContextForm(val);
   goTo('context');
 });
 
-document.getElementById('decisionInput').addEventListener('keydown', e=>{
-  if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)) document.getElementById('btnNext').click();
-});
-
-// ─── CONTEXT ─────────────────────────────────────────────────────────────────
-function loadContextQuestions(decision) {
-  document.getElementById('ctxDecisionShow').textContent = `"${decision}"`;
+// ── CONTEXT FORM ─────────────────────────────────────────────────────────
+function buildContextForm(decision) {
+  document.getElementById('ctxShow').textContent = `"${decision}"`;
   const theme = detect(decision);
-  const questions = CTX_QUESTIONS[theme] || CTX_QUESTIONS.geral;
-  const container = document.getElementById('ctxQuestions');
-  container.innerHTML = '';
+  const qs = CTX[theme] || CTX.geral;
+  const grid = document.getElementById('ctxGrid');
+  grid.innerHTML = '';
 
-  questions.forEach(q => {
-    const div = document.createElement('div');
-    div.className = 'ctx-q';
-
-    if(q.type === 'opts') {
-      div.innerHTML = `<div class="q-text">${q.label}</div><div class="ctx-options" id="opts_${q.id}">
-        ${q.opts.map(o=>`<button class="ctx-opt" data-q="${q.id}" data-v="${o}">${o}</button>`).join('')}
-      </div>`;
+  qs.forEach(q=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'ctx-q-wrap' + (q.type==='text'?' ctx-extra':'');
+    if(q.type==='opts'){
+      wrap.innerHTML = `<div class="ctx-q-text">${q.text}</div>
+        <div class="ctx-opts" id="opts_${q.id}">
+          ${q.opts.map(o=>`<button class="ctx-opt" data-q="${q.id}" data-v="${o}">${o}</button>`).join('')}
+        </div>`;
     } else {
-      div.innerHTML = `<div class="q-text">${q.label}</div>
-        <textarea class="ctx-textarea" id="ctx_${q.id}" placeholder="${q.placeholder||''}" rows="2"></textarea>`;
+      wrap.innerHTML = `<div class="ctx-q-text">${q.text}</div>
+        <textarea class="ctx-extra-ta" id="ctxta_${q.id}" placeholder="${q.ph||''}" rows="2"></textarea>`;
     }
-    container.appendChild(div);
+    grid.appendChild(wrap);
   });
 
-  // option selection
-  container.querySelectorAll('.ctx-opt').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const qId = btn.dataset.q;
-      container.querySelectorAll(`.ctx-opt[data-q="${qId}"]`).forEach(b=>b.classList.remove('sel'));
+  grid.querySelectorAll('.ctx-opt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const q = btn.dataset.q;
+      grid.querySelectorAll(`.ctx-opt[data-q="${q}"]`).forEach(b=>b.classList.remove('sel'));
       btn.classList.add('sel');
-      state.context[qId] = btn.dataset.v;
+      S.context[q] = btn.dataset.v;
     });
   });
 }
 
-document.getElementById('btnAnalyze').addEventListener('click', () => {
-  // collect text areas
-  document.querySelectorAll('.ctx-textarea').forEach(ta => {
-    const id = ta.id.replace('ctx_','');
-    if(ta.value.trim()) state.context[id] = ta.value.trim();
+document.getElementById('btnAnalyze').addEventListener('click', ()=>{
+  document.querySelectorAll('[id^=ctxta_]').forEach(ta=>{
+    const id = ta.id.replace('ctxta_','');
+    if(ta.value.trim()) S.context[id] = ta.value.trim();
   });
-  runAnalysis();
+  startAnalysis();
 });
 
-// ─── ANALYSIS ─────────────────────────────────────────────────────────────────
-function runAnalysis() {
+// ── ANALYSIS ─────────────────────────────────────────────────────────────
+const loadingMessages = [
+  'CLARÊ está refletindo...',
+  'Pesando cada perspectiva...',
+  'Ouvindo o que os fatos dizem...',
+  'Consultando a sabedoria acumulada...',
+  'Construindo a síntese...',
+];
+
+async function startAnalysis() {
   goTo('loading');
-  setTimeout(() => {
-    const theme = detect(state.decision);
-    const data  = buildContent(theme, state.context);
-    state.currentResult = data;
-    state.chatHistory   = [];
-    renderResults(state.decision, state.context, data);
-    saveSession();
-    renderHistory();
-    goTo('results');
-  }, 1600);
+  let msgIdx = 0;
+  const msgEl = document.getElementById('loadingText');
+  const msgInterval = setInterval(()=>{
+    msgIdx = (msgIdx+1)%loadingMessages.length;
+    msgEl.textContent = loadingMessages[msgIdx];
+  }, 1400);
+
+  const theme = detect(S.decision);
+  let analysis;
+
+  try {
+    analysis = await runAIAnalysis(S.decision, S.context, theme);
+  } catch(e) {
+    analysis = fallbackAnalysis(S.decision, S.context, theme);
+  }
+
+  clearInterval(msgInterval);
+  S.currentAnalysis = analysis;
+  S.chatHistory = [];
+
+  renderResults(S.decision, S.context, analysis);
+  saveSession();
+  renderHistory();
+  renderPatterns();
+  goTo('results');
 }
 
-// ─── RESULTS ─────────────────────────────────────────────────────────────────
-function renderResults(decision, context, data) {
-  const truncated = decision.length > 70 ? decision.slice(0,70)+'…' : decision;
-  document.getElementById('rDecision').textContent = `"${truncated}"`;
+// ── RENDER RESULTS ────────────────────────────────────────────────────────
+function renderResults(decision, context, a) {
+  const trunc = decision.length>72 ? decision.slice(0,72)+'…' : decision;
+  document.getElementById('rDecision').textContent = `"${trunc}"`;
 
-  // context tags
-  const summary = document.getElementById('ctxSummary');
-  summary.innerHTML = '';
-  Object.entries(context).filter(([k,v])=>v&&k!=='livre').forEach(([k,v]) => {
-    const tag = document.createElement('div');
-    tag.className = 'ctx-tag';
-    tag.textContent = v;
-    summary.appendChild(tag);
+  // ctx chips
+  const tags = document.getElementById('ctxTags');
+  tags.innerHTML = '';
+  Object.entries(context).filter(([k,v])=>v&&k!=='livre').forEach(([k,v])=>{
+    const chip = document.createElement('div');
+    chip.className='ctx-chip'; chip.textContent=v; tags.appendChild(chip);
   });
 
   // lenses
   const grid = document.getElementById('lensesGrid');
   grid.innerHTML = '';
-  LENS_META.forEach(m => {
-    const c = document.createElement('div');
-    c.className='card'; c.dataset.l=m.key;
-    c.innerHTML=`<span class="card-icon">${m.icon}</span><div class="card-name">${m.name}</div><div class="card-title">${m.title}</div><div class="card-body">${data[m.key]||''}</div>`;
-    grid.appendChild(c);
+  LENS_META.forEach(m=>{
+    const cell = document.createElement('div');
+    cell.className='lens-cell'; cell.dataset.l=m.key;
+    cell.innerHTML=`<div class="lens-cell-top"><div class="lens-dot"></div><div class="lens-name">${m.name}</div></div>
+      <div class="lens-title">${m.title}</div>
+      <div class="lens-body">${a[m.key]||''}</div>`;
+    grid.appendChild(cell);
   });
 
-  document.getElementById('verdictText').textContent = data.sintese || '';
-  document.getElementById('verdictQ').textContent = data.pergunta ? `A pergunta que você precisa responder: ${data.pergunta}` : '';
+  document.getElementById('verdictText').textContent = a.sintese||'';
+  document.getElementById('verdictQ').textContent = a.pergunta||'';
+
+  // pattern insight if applicable
+  const patterns = detectPatterns(S.sessions);
+  const badge = document.getElementById('insightBadge');
+  const insightEl = document.getElementById('insightText');
+  if(S.sessions.length >= 2) {
+    const theme = detect(decision);
+    const sameTheme = S.sessions.filter(s=>detect(s.decision)===theme).length;
+    if(sameTheme >= 2) {
+      insightEl.textContent = `PADRÃO DETECTADO — Esta é a ${sameTheme}ª vez que você traz uma decisão sobre ${theme}. Pode valer a pena perguntar: o que nessa área da vida ainda não foi resolvido de vez?`;
+      badge.style.display='flex';
+    } else if(S.sessions.length >= 3) {
+      insightEl.textContent = `Você já trouxe ${S.sessions.length} decisões para CLARÊ. Olhando o conjunto, qual é o fio que conecta todas elas?`;
+      badge.style.display='flex';
+    } else {
+      badge.style.display='none';
+    }
+  } else { badge.style.display='none'; }
 
   // init chat
-  const msgs = document.getElementById('chatMessages');
+  const msgs = document.getElementById('chatMsgs');
   msgs.innerHTML = '';
-  addChatMessage('mirror', `Acabei de refletir sobre sua decisão. A pergunta que mais me ficou é: <em>${data.pergunta}</em><br><br>O que isso levanta para você?`);
+  addMsg('clare', `Acabei de analisar sua situação. A pergunta que mais me ficou foi: <em>"${a.pergunta}"</em><br><br>O que isso levanta para você?`);
 }
 
-// ─── CHAT ─────────────────────────────────────────────────────────────────────
-function addChatMessage(role, html) {
-  const msgs = document.getElementById('chatMessages');
+// ── CHAT ─────────────────────────────────────────────────────────────────
+function addMsg(role, html, isTyping=false) {
+  const msgs = document.getElementById('chatMsgs');
   const div = document.createElement('div');
-  div.className=`chat-msg ${role}`;
-  const avatar = role==='mirror' ? '◎' : '◌';
-  div.innerHTML=`<div class="msg-avatar">${avatar}</div><div class="msg-bubble">${html}</div>`;
+  div.className = `msg ${role}${isTyping?' typing-indicator':''}`;
+  if(isTyping) {
+    div.id = 'typingIndicator';
+    div.innerHTML = `<div class="msg-av">${role==='clare'?'C':'V'}</div><div class="msg-bub"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  } else {
+    div.innerHTML = `<div class="msg-av">${role==='clare'?'C':'V'}</div><div class="msg-bub">${html}</div>`;
+  }
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
+  return div;
 }
 
-function sendChat() {
-  const input = document.getElementById('chatInput');
+async function sendChat() {
+  const input = document.getElementById('chatIn');
   const text = input.value.trim();
   if(!text) return;
   input.value = '';
-  state.chatHistory.push({role:'user',text});
-  addChatMessage('user', text);
+  document.getElementById('sendBtn').disabled = true;
 
-  setTimeout(() => {
-    const reply = generateChatReply(text, state.decision, state.context, state.currentResult);
-    state.chatHistory.push({role:'mirror',text:reply});
-    addChatMessage('mirror', reply);
+  S.chatHistory.push({role:'user',text});
+  addMsg('user', text);
+
+  // typing indicator
+  addMsg('clare', '', true);
+
+  try {
+    let reply;
+    try {
+      reply = await runAIChatReply(text, S.decision, S.context, S.currentAnalysis, S.chatHistory);
+    } catch(e) {
+      const fallbacks = [
+        `O que você está sentindo enquanto processa isso tudo? Às vezes o mais importante não está na resposta, mas em como o corpo reage à pergunta.`,
+        `Uma pergunta direta: se você tivesse que dar uma resposta agora, sem mais tempo para pensar — o que diria?`,
+        `Há algo sobre a sua situação que CLARÊ ainda não sabe — e que mudaria a análise se soubesse?`,
+        `Qual das seis perspectivas foi a mais difícil de ler? Geralmente é essa que tem mais a ensinar.`,
+        `Medo não é o problema — é informação. Esse medo está te protegendo de algo real, ou te impedindo de algo necessário?`,
+      ];
+      reply = fallbacks[Math.floor(Math.random()*fallbacks.length)];
+    }
+
+    const ind = document.getElementById('typingIndicator');
+    if(ind) ind.remove();
+
+    S.chatHistory.push({role:'clare',text:reply});
+    addMsg('clare', reply);
     updateSessionChat();
-  }, 600 + Math.random()*400);
+  } finally {
+    document.getElementById('sendBtn').disabled = false;
+  }
 }
 
-document.getElementById('chatSend').addEventListener('click', sendChat);
-document.getElementById('chatInput').addEventListener('keydown', e=>{
+document.getElementById('sendBtn').addEventListener('click', sendChat);
+document.getElementById('chatIn').addEventListener('keydown', e=>{
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}
 });
 
-// ─── HISTORY ─────────────────────────────────────────────────────────────────
+// ── HISTORY ───────────────────────────────────────────────────────────────
 function saveSession() {
   const id = Date.now().toString();
-  state.activeSessionId = id;
-  const session = {
-    id, decision: state.decision, context: state.context,
-    result: state.currentResult, chat: state.chatHistory,
-    date: new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})
-  };
-  state.sessions.unshift(session);
-  if(state.sessions.length > 20) state.sessions = state.sessions.slice(0,20);
-  localStorage.setItem('espelho_sessions', JSON.stringify(state.sessions));
+  S.activeId = id;
+  S.sessions.unshift({
+    id, date: new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}),
+    decision: S.decision, context: S.context,
+    analysis: S.currentAnalysis, chat: []
+  });
+  if(S.sessions.length>30) S.sessions = S.sessions.slice(0,30);
+  persist();
 }
 
 function updateSessionChat() {
-  const s = state.sessions.find(s=>s.id===state.activeSessionId);
-  if(s) { s.chat = state.chatHistory; localStorage.setItem('espelho_sessions', JSON.stringify(state.sessions)); }
+  const s = S.sessions.find(s=>s.id===S.activeId);
+  if(s){ s.chat = S.chatHistory; persist(); }
 }
 
-function renderHistory() {
-  const list = document.getElementById('historyList');
-  const empty = document.getElementById('historyEmpty');
-  if(state.sessions.length === 0) { empty.style.display='block'; return; }
-  empty.style.display = 'none';
+function persist() { localStorage.setItem('clare_v2_sessions', JSON.stringify(S.sessions)); }
 
+function renderHistory() {
+  const list = document.getElementById('histList');
+  if(!S.sessions.length){ list.innerHTML='<div class="hist-empty">Nenhuma ainda</div>'; return; }
   list.innerHTML = '';
-  state.sessions.forEach(s => {
+  S.sessions.forEach(s=>{
     const item = document.createElement('div');
-    item.className = `history-item${s.id===state.activeSessionId?' active':''}`;
-    item.innerHTML = `<div class="h-date">${s.date}</div><div class="h-text">${s.decision}</div>`;
-    item.addEventListener('click', () => loadSession(s));
+    item.className = `hist-item${s.id===S.activeId?' active':''}`;
+    item.innerHTML = `<div class="hist-item-date">${s.date}</div><div class="hist-item-text">${s.decision}</div>`;
+    item.addEventListener('click', ()=>loadSession(s));
     list.appendChild(item);
   });
 }
 
 function loadSession(s) {
-  state.decision = s.decision;
-  state.context = s.context;
-  state.currentResult = s.result;
-  state.chatHistory = s.chat || [];
-  state.activeSessionId = s.id;
-  renderResults(s.decision, s.context, s.result);
-  // restore chat
-  const msgs = document.getElementById('chatMessages');
-  msgs.innerHTML = '';
-  if(s.chat && s.chat.length) {
-    s.chat.forEach(m=>addChatMessage(m.role, m.text));
-  } else {
-    addChatMessage('mirror', `Acabei de refletir sobre sua decisão. A pergunta que mais me ficou é: <em>${s.result.pergunta}</em><br><br>O que isso levanta para você?`);
-  }
+  S.decision=s.decision; S.context=s.context;
+  S.currentAnalysis=s.analysis; S.chatHistory=s.chat||[];
+  S.activeId=s.id;
+  renderResults(s.decision,s.context,s.analysis);
+  const msgs=document.getElementById('chatMsgs');
+  msgs.innerHTML='';
+  if(s.chat&&s.chat.length){ s.chat.forEach(m=>addMsg(m.role,m.text)); }
+  else { addMsg('clare',`Acabei de analisar sua situação. A pergunta que mais me ficou foi: <em>"${s.analysis.pergunta}"</em><br><br>O que isso levanta para você?`); }
   renderHistory();
   goTo('results');
 }
 
-document.getElementById('newBtn').addEventListener('click', () => {
-  state.activeSessionId = null;
+function renderPatterns() {
+  const patterns = detectPatterns(S.sessions);
+  const panel = document.getElementById('patternsPanel');
+  const tagsEl = document.getElementById('patternTags');
+  if(!patterns.length){ panel.style.display='none'; return; }
+  panel.style.display='block';
+  tagsEl.innerHTML = patterns.map(p=>`<span class="pattern-tag">${p}</span>`).join('');
+}
+
+document.getElementById('newBtn').addEventListener('click', ()=>{
+  S.activeId=null;
   document.getElementById('decisionInput').value='';
+  document.getElementById('btnContinue').disabled=true;
   renderHistory();
   goTo('home');
 });
 
-// ─── EXPORT ──────────────────────────────────────────────────────────────────
-document.getElementById('exportBtn').addEventListener('click', () => {
-  const d = state.currentResult;
-  const ctx = Object.entries(state.context).filter(([k,v])=>v&&k!=='livre').map(([k,v])=>`  ${k}: ${v}`).join('\n');
-  const chat = state.chatHistory.map(m=>`${m.role==='mirror'?'Espelho':'Você'}: ${m.text.replace(/<[^>]+>/g,'')}`).join('\n');
+// ── EXPORT ────────────────────────────────────────────────────────────────
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const a = S.currentAnalysis;
+  const ctx = Object.entries(S.context).filter(([k,v])=>v&&k!=='livre').map(([k,v])=>`  ${k}: ${v}`).join('\n');
+  const chat = S.chatHistory.map(m=>`${m.role==='clare'?'CLARÊ':'Você'}: ${m.text.replace(/<[^>]+>/g,'')}`).join('\n\n');
+  const txt = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CLARÊ — O espelho que fala de volta
+${new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  const txt = `══════════════════════════════════════
-ESPELHO DE DECISÕES — ${new Date().toLocaleDateString('pt-BR')}
-══════════════════════════════════════
+DECISÃO
+"${S.decision}"
 
-DECISÃO: ${state.decision}
+CONTEXTO
+${ctx||'  não informado'}
 
-CONTEXTO:
-${ctx || '  (não informado)'}
+───────────────────────────────────────
+AS SEIS PERSPECTIVAS
+───────────────────────────────────────
 
-──────────────────────────────────────
-SEIS PERSPECTIVAS
-──────────────────────────────────────
+◈  RAZÃO — O que os fatos dizem
+${a.razao}
 
-◈ RAZÃO — O que os fatos dizem
-${d.razao}
+◉  EMOÇÃO — O que o corpo sente
+${a.emocao}
 
-◉ EMOÇÃO — O que o corpo sente
-${d.emocao}
+◬  FUTURO — Daqui a 10 anos
+${a.futuro}
 
-◬ FUTURO — Daqui a 10 anos
-${d.futuro}
+◎  SABEDORIA — O que um sábio diria
+${a.sabedoria}
 
-◎ SABEDORIA — O que um sábio diria
-${d.sabedoria}
+◧  RISCO — O que pode dar errado
+${a.risco}
 
-◧ RISCO — O que pode dar errado
-${d.risco}
+◌  IMPACTO — Quem mais é afetado
+${a.outros}
 
-◌ IMPACTO — Quem mais é afetado
-${d.outros}
+───────────────────────────────────────
+SÍNTESE DE CLARÊ
+───────────────────────────────────────
+${a.sintese}
 
-──────────────────────────────────────
-SÍNTESE
-──────────────────────────────────────
-${d.sintese}
+— ${a.pergunta}
 
-A PERGUNTA MAIS IMPORTANTE:
-${d.pergunta}
-
-──────────────────────────────────────
+───────────────────────────────────────
 CONVERSA
-──────────────────────────────────────
-${chat || '(nenhuma mensagem ainda)'}
+───────────────────────────────────────
+${chat||'(nenhuma mensagem ainda)'}
 
-══════════════════════════════════════`;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
 
-  document.getElementById('modalContent').textContent = txt;
-  document.getElementById('modalOverlay').classList.add('on');
-
-  document.getElementById('modalCopyBtn').onclick = () => {
+  document.getElementById('modalPre').textContent = txt;
+  document.getElementById('modalBg').classList.add('on');
+  document.getElementById('copyBtn').onclick = ()=>{
     navigator.clipboard.writeText(txt).then(()=>{
-      document.getElementById('modalCopyBtn').textContent='✓ Copiado!';
-      setTimeout(()=>document.getElementById('modalCopyBtn').textContent='Copiar texto',2000);
+      document.getElementById('copyBtn').textContent='✓ Copiado!';
+      setTimeout(()=>document.getElementById('copyBtn').textContent='Copiar',2000);
     });
   };
 });
 
-function closeModal() { document.getElementById('modalOverlay').classList.remove('on'); }
-document.getElementById('modalOverlay').addEventListener('click', e=>{if(e.target===e.currentTarget)closeModal();});
+function closeModal(){ document.getElementById('modalBg').classList.remove('on'); }
+document.getElementById('modalBg').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
+// ── INIT ──────────────────────────────────────────────────────────────────
 renderHistory();
+renderPatterns();
 </script>
 </body>
 </html>
